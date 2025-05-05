@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+service CardPricesService {
+  rpc UploadCardPricesData (CardPricesUploadRequest) returns (CardPricesUploadResponse);
+}
+
+message CardPricesUploadRequest {
+  string file_path = 1;
+}
+
+message CardPricesUploadResponse {
+  string status = 1;
+}

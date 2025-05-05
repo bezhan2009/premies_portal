@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+service TusService {
+  rpc UploadTusData (TusUploadRequest) returns (TusUploadResponse);
+  rpc CleanTusTable (google.protobuf.Empty) returns (TusCleanResponse);
+}
+
+message TusUploadRequest {
+  string file_path = 1;
+}
+
+message TusUploadResponse {
+  string status = 1;
+}
+
+message TusCleanResponse {
+  string status = 1;
+}

@@ -1,0 +1,45 @@
+{
+  "log_params": {
+    "log_directory": "logs",
+    "log_info": "info.log",
+    "log_error": "error.log",
+    "log_warn": "warn.log",
+    "log_debug": "debug.log",
+    "max_size_megabytes": 10,
+    "max_backups": 4,
+    "max_age": 30,
+    "compress": true,
+    "local_time": true
+  },
+  "app_params": {
+    "gin_mode": "release",
+    "port_run": "7575",
+    "server_url": "localhost",
+    "server_name": "Ecadr_service"
+  },
+  "postgres_params": {
+    "host": "localhost",
+    "port": "5432",
+    "user": "postgres",
+    "database": "premies_portal_db",
+    "sslmode": "disable"
+  },
+  "redis_params": {
+    "host": "localhost",
+    "port": 6379,
+    "password": "",
+    "db": 0,
+    "ttl_minutes": 10
+  },
+  "providers": {
+    "google": {
+      "client_id": "YOUR_CLIENT_ID",
+      "client_secret": "YOUR_CLIENT_SECRET",
+      "redirect": "http://localhost:8585/auth/google/callback"
+    }
+  },
+  "auth_params": {
+    "jwt_secret_key": "",
+    "jwt_ttl_minutes": 60
+  }
+}
