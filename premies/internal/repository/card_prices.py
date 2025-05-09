@@ -54,18 +54,16 @@ def upload_card_prices_to_dict() -> Exception | dict:
     cursor = get_cursor()
 
     try:
-        cursor.execute(
-            sql.SQL("SELECT * FROM card_prices"),
-        )
-
+        cursor.execute("SELECT * FROM card_prices")
         card_prices = cursor.fetchall()
     except Exception as e:
-        logger.error("[{}] Error while getting card prices from database: {}".format(OP, str(e)))
-        return e
+        logger.error("Error while getting card prices from database: {}".format(str(e)))
+        raise  # выбрасываем исключение
 
     if not card_prices:
-        logger.error("[{}] No card prices were found".format(OP))
-        return Exception("No card prices were found")
+        # Вместо возврата Exception, лучше выбросить
+        logger.error("No card prices were found")
+        raise Exception("No card prices were found")
 
     for card_price in card_prices:
         coast_dict[str(card_price[1]).strip()] = float(card_price[2])

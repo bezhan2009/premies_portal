@@ -3,7 +3,7 @@ database:
   port: 5432
   user: postgres
   password: bezhan2009
-  name: postgres
+  name: premies_portal_db
 
 grpc:
   host: 0.0.0.0

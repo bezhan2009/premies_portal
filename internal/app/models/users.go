@@ -6,14 +6,14 @@ type User struct {
 	gorm.Model
 
 	Username string `gorm:"type:varchar(255);unique;not null"`
-	Email    string `gorm:"type:varchar(255);unique;not null"`
-	Phone    string `gorm:"type:varchar(9);unique;not null"`
+	Email    string `gorm:"type:varchar(255);unique;"`
+	Phone    string `gorm:"type:varchar(9);unique;"`
 	Password string `json:"-" gorm:"type:varchar(255);not null"`
 
-	FirstName string `json:"first_name" gorm:"not null"`
-	LastName  string `json:"last_name" gorm:"not null"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
 
-	RoleID int
+	RoleID int  `json:"role_id" gorm:"not null"`
 	Role   Role `json:"-" gorm:"foreignKey:RoleID"`
 
 	CardTurnovers   []CardTurnovers   `gorm:"foreignKey:WorkerID"`

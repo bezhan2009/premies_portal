@@ -49,6 +49,10 @@ func SignUp(user models.User) (uint, error) {
 		return 0, errs.ErrInvalidData
 	}
 
+	if utils.IsASCII(user.Username) {
+		return 0, errs.ErrUsernameCanContainOnlyASCII
+	}
+
 	if usernameExists {
 		logger.Error.Printf("user with username %s already exists", user.Username)
 		return 0, errs.ErrUsernameUniquenessFailed

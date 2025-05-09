@@ -49,7 +49,7 @@ def upload_cards(df: DataFrame, coast_dict: dict) -> Exception | str:
 
     conn.commit()
 
-    logger.info("[{}] Cards uploaded".format(OP))
+    logger.info("[{}] CardsPrem uploaded".format(OP))
 
     return "Successfully uploaded cards"
 
@@ -71,5 +71,5 @@ def clean_cards_table() -> Exception | str:
         logger.error("[{}] Error while cleaning cards table: {}".format(OP, str(e)))
         return e
 
-    logger.info("[{}] Cards table cleaned successfully".format(OP))
+    logger.info("[{}] CardsPrem table cleaned successfully".format(OP))
     return "Successfully cleaned cards table"

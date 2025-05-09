@@ -82,10 +82,10 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 
 	knowledgeDocs := knowledge.Group("/docs")
 	{
-		knowledgeDocs.POST("", controllers.CreateKnowledgeDoc)
+		knowledgeDocs.POST("", middlewares.SaveFileFromResponse, controllers.CreateKnowledgeDoc)
 
 		knowledgeDocs.GET("/:id", controllers.GetKnowledgeDocsByKnowledgeID)
-		knowledgeDocs.PATCH("/:id", controllers.UpdateKnowledgeDoc)
+		knowledgeDocs.PATCH("/:id", middlewares.SaveFileFromResponse, controllers.UpdateKnowledgeDoc)
 		knowledgeDocs.DELETE("/:id", controllers.DeleteKnowledgeDoc)
 	}
 

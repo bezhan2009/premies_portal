@@ -15,11 +15,17 @@ def upload_card_prices(path_file: str):
 def upload_card_prices_to_dict():
     global coast_dict
 
-    res_dict = card_prices.upload_card_prices_to_dict()
-    if type(res_dict) is Exception:
-        return res_dict
+    try:
+        res_dict = card_prices.upload_card_prices_to_dict()
+    except Exception:
+        upload_card_prices("./uploads/prices.xlsx")
+        try:
+            res_dict = card_prices.upload_card_prices_to_dict()
+        except Exception as e2:
+            return e2
 
     coast_dict = res_dict
+
     return "Successfully uploaded card prices to dictionary."
 
 

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service"
+	"premiesPortal/internal/controllers/middlewares"
 	"premiesPortal/pkg/errs"
 	"strconv"
 )
@@ -50,6 +51,8 @@ func CreateKnowledgeDoc(c *gin.Context) {
 		return
 	}
 
+	knowledgeDoc.FilePath = c.GetString(middlewares.UploadedFilePath)
+
 	err := service.CreateKnowledgeDocs(knowledgeDoc)
 	if err != nil {
 		HandleError(c, err)
@@ -74,6 +77,7 @@ func UpdateKnowledgeDoc(c *gin.Context) {
 	}
 
 	knowledgeDoc.ID = uint(knowledgeDocId)
+	knowledgeDoc.FilePath = c.GetString(middlewares.UploadedFilePath)
 
 	err = service.UpdateKnowledgeDocs(knowledgeDoc)
 	if err != nil {
