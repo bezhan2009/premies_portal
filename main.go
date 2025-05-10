@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/signal"
 	"premiesPortal/configs"
+	"premiesPortal/internal/clients/sso/grpc"
 	"premiesPortal/internal/routes"
 	"premiesPortal/internal/security"
 	"premiesPortal/internal/server"
@@ -86,6 +87,23 @@ func main() {
 			log.Fatalf("Error while starting HTTP Service: %s", err)
 		}
 	}()
+
+	err = grpc.New(
+		context.Background(),
+		security.AppSettings.Clients.Premies.ClientAddress,
+		security.AppSettings.Clients.Premies.Timeout,
+		security.AppSettings.Clients.Premies.RetriesCount,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	//response, err := grpc.GetClient().CleanCards(context.Background(), &emptypb.Empty{})
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//
+	//fmt.Println(response)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)

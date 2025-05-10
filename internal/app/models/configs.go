@@ -8,6 +8,7 @@ type Configs struct {
 	PostgresParams  PostgresParams  `json:"postgres_params"`
 	RedisParams     RedisParams     `json:"redis_params"`
 	ProvidersParams ProvidersConfig `json:"providers"`
+	Clients         ClientsConfig   `json:"clients"`
 	Auth            Auth            `json:"auth"`
 }
 
@@ -60,4 +61,15 @@ type GoogleProvider struct {
 
 type ProvidersConfig struct {
 	GoogleProvider GoogleProvider `json:"google_provider"`
+}
+
+type Client struct {
+	ClientAddress string        `json:"address"`
+	Timeout       time.Duration `json:"timeout"`
+	RetriesCount  int           `json:"retries_count"`
+	Insecure      bool          `json:"insecure"`
+}
+
+type ClientsConfig struct {
+	Premies Client `json:"premies"`
 }
