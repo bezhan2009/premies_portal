@@ -15,4 +15,5 @@ var (
 	ErrRefreshTokenExpired         = errors.New("ErrRefreshTokenExpired")
 	ErrInvalidDescription          = errors.New("ErrInvalidDescription")
 	ErrUsernameCanContainOnlyASCII = errors.New("ErrUsernameCanContainOnlyASCII")
+	ErrInvalidBaseID               = errors.New("ErrInvalidBaseID")
 )

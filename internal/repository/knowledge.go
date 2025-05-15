@@ -26,6 +26,16 @@ func GetKnowledgeByID(knowledgeID uint) (knowledge models.Knowledge, err error) 
 	return knowledge, nil
 }
 
+func GetKnowledgeByTitleAndBaseID(title string, baseID uint) (knowledge models.Knowledge, err error) {
+	if err = db.GetDBConn().Model(&models.Knowledge{}).Where("title = ? AND knowledge_base_id = ?", title, baseID).First(&knowledge).Error; err != nil {
+		logger.Error.Printf("[repository.GetKnowledgeByTitle] Error finding knowledge: %v", err)
+
+		return models.Knowledge{}, TranslateGormError(err)
+	}
+
+	return knowledge, nil
+}
+
 func CreateKnowledgeTable(knowledge models.Knowledge) (err error) {
 	if err = db.GetDBConn().Model(&models.Knowledge{}).Create(&knowledge).Error; err != nil {
 		logger.Error.Printf("[repository.CreateKnowledgeTable] Error while creating knowledge table: %v", err)

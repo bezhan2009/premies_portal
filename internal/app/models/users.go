@@ -10,8 +10,7 @@ type User struct {
 	Phone    string `gorm:"type:varchar(9);unique;"`
 	Password string `json:"-" gorm:"type:varchar(255);not null"`
 
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FullName string `json:"full_name" gorm:"type:varchar(255);"`
 
 	RoleID int  `json:"role_id" gorm:"not null"`
 	Role   Role `json:"-" gorm:"foreignKey:RoleID"`

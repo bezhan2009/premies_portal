@@ -23,9 +23,9 @@ type Knowledge struct {
 	Tags        pq.StringArray `json:"tags" gorm:"type:text[]"`
 
 	KnowledgeBaseID uint          `json:"knowledge_base_id"`
-	KnowledgeBase   KnowledgeBase `json:"knowledge_base" gorm:"foreignKey:KnowledgeBaseID"`
+	KnowledgeBase   KnowledgeBase `json:"-" gorm:"foreignKey:KnowledgeBaseID"`
 
-	KnowledgeDocs []KnowledgeDocs `json:"knowledge_docs" gorm:"many2many:knowledge_knowledge_docs;"`
+	KnowledgeDocs []KnowledgeDocs `json:"knowledge_docs" gorm:"foreignKey:KnowledgeID"`
 }
 
 type KnowledgeDocs struct {
@@ -33,4 +33,7 @@ type KnowledgeDocs struct {
 
 	Title    string `json:"title" gorm:"not null"`
 	FilePath string `json:"file_path" gorm:"not null"`
+
+	KnowledgeID uint      `json:"knowledge_id" gorm:"not null"`
+	Knowledge   Knowledge `json:"knowledge" gorm:"foreignKey:KnowledgeID"`
 }

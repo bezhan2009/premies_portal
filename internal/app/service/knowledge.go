@@ -2,6 +2,7 @@ package service
 
 import (
 	"premiesPortal/internal/app/models"
+	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/repository"
 )
 
@@ -25,6 +26,10 @@ func GetKnowledgeByID(knowledgeID uint) (knowledge models.Knowledge, err error) 
 }
 
 func CreateKnowledgeTable(knowledge models.Knowledge) (err error) {
+	if err = validators.KnowledgeValidateData(knowledge); err != nil {
+		return err
+	}
+
 	err = repository.CreateKnowledgeTable(knowledge)
 	if err != nil {
 		return err
@@ -34,6 +39,10 @@ func CreateKnowledgeTable(knowledge models.Knowledge) (err error) {
 }
 
 func UpdateKnowledge(knowledge models.Knowledge) (err error) {
+	if err = validators.KnowledgeValidateData(knowledge); err != nil {
+		return err
+	}
+
 	err = repository.UpdateKnowledge(knowledge)
 	if err != nil {
 		return err

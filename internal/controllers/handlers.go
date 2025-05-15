@@ -17,7 +17,10 @@ func handleBadRequestErrors(err error) bool {
 		errors.Is(err, errs.ErrInvalidPhoneNumber) ||
 		errors.Is(err, errs.ErrEmailUniquenessFailed) ||
 		errors.Is(err, errs.ErrPhoneUniquenessFailed) ||
+		errors.Is(err, errs.ErrKnowledgeAlreadyExists) ||
+		errors.Is(err, errs.ErrKnowledgeBaseUniquenessFailed) ||
 		errors.Is(err, errs.ErrWrongRoleID) ||
+		errors.Is(err, errs.ErrInvalidBaseID) ||
 		errors.Is(err, errs.ErrFirstNameIsRequired) ||
 		errors.Is(err, errs.ErrLastNameIsRequired) ||
 		errors.Is(err, errs.ErrEmailIsRequired) ||
@@ -39,7 +42,9 @@ func handleBadRequestErrors(err error) bool {
 
 // Обработка ошибок, которые приводят к статусу 404 (Not Found)
 func handleNotFoundErrors(err error) bool {
-	return errors.Is(err, errs.ErrRecordNotFound)
+	return errors.Is(err, errs.ErrRecordNotFound) ||
+		errors.Is(err, errs.ErrUserNotFound) ||
+		errors.Is(err, errs.ErrKnowledgeBaseNotFound)
 }
 
 // Обработка ошибок, которые приводят к статусу 401 (Unauthorized)
@@ -60,7 +65,7 @@ func HandleError(c *gin.Context, err error) {
 	} else if handleUnauthorizedErrors(err) {
 		c.JSON(http.StatusUnauthorized, newErrorResponse(err.Error()))
 	} else {
-		logger.Error.Printf("Err: %s", err)
+		logger.Error.Printf("[controllers.HandleError] Err: %s", err)
 		c.JSON(http.StatusInternalServerError, newErrorResponse(errs.ErrSomethingWentWrong.Error()))
 	}
 }

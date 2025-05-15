@@ -19,6 +19,23 @@ func GetAllKnowledgeBases(c *gin.Context) {
 	c.JSON(http.StatusOK, knowledgeBases)
 }
 
+func GetKnowledgeBaseByID(c *gin.Context) {
+	knowledgeBasesIDStr := c.Param("id")
+	knowledgeBasesID, err := strconv.Atoi(knowledgeBasesIDStr)
+	if err != nil {
+		HandleError(c, errs.ErrInvalidID)
+		return
+	}
+
+	knowledgeBase, err := service.GetKnowledgeBaseByID(uint(knowledgeBasesID))
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, knowledgeBase)
+}
+
 func CreateKnowledgeBase(c *gin.Context) {
 	var kb models.KnowledgeBase
 	if err := c.ShouldBindJSON(&kb); err != nil {

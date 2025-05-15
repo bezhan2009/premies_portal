@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-func GetAllUsers() (users []models.User, err error) {
-	users, err = repository.GetAllUsers()
+func GetAllUsers(afterID uint) (users []models.User, err error) {
+	users, err = repository.GetAllUsersPag(afterID)
 	if err != nil {
 		return nil, err
 	}

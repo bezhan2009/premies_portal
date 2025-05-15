@@ -4,6 +4,7 @@ import (
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/repository"
+	"premiesPortal/pkg/errs"
 )
 
 func GetAllKnowledgeBases() (knowledgeBases []models.KnowledgeBase, err error) {
@@ -15,9 +16,23 @@ func GetAllKnowledgeBases() (knowledgeBases []models.KnowledgeBase, err error) {
 	return knowledgeBases, nil
 }
 
+func GetKnowledgeBaseByID(kbid uint) (knowledgeBases models.KnowledgeBase, err error) {
+	knowledgeBases, err = repository.GetKnowledgeBaseByID(kbid)
+	if err != nil {
+		return models.KnowledgeBase{}, err
+	}
+
+	return knowledgeBases, nil
+}
+
 func CreateKnowledgeBase(kb models.KnowledgeBase) (err error) {
 	if err = validators.ValidateKnowledgeBase(kb); err != nil {
 		return err
+	}
+
+	_, err = repository.GetKnowledgeBaseByTitle(kb.Title)
+	if err == nil {
+		return errs.ErrKnowledgeBaseUniquenessFailed
 	}
 
 	err = repository.CreateKnowledgeBase(kb)
@@ -31,6 +46,11 @@ func CreateKnowledgeBase(kb models.KnowledgeBase) (err error) {
 func UpdateKnowledgeBase(kb models.KnowledgeBase) (err error) {
 	if err = validators.ValidateKnowledgeBase(kb); err != nil {
 		return err
+	}
+
+	_, err = repository.GetKnowledgeBaseByTitle(kb.Title)
+	if err == nil {
+		return errs.ErrKnowledgeBaseUniquenessFailed
 	}
 
 	err = repository.UpdateKnowledgeBase(kb)

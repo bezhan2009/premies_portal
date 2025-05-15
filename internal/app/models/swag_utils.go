@@ -23,13 +23,12 @@ type DefaultResponse struct {
 }
 
 type UserRequest struct {
-	Username  string `json:"username"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Password  string `json:"password"`
-	RoleID    uint   `json:"role_id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
+	FullName string `json:"full_name"`
+	Password string `json:"password"`
+	RoleID   uint   `json:"role_id"`
 }
 
 type UserLogin struct {

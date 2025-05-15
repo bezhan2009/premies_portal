@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"premiesPortal/internal/app/models"
+	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/repository"
 	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
@@ -40,6 +41,10 @@ func SignIn(userDataCheck, password string) (user models.User, accessToken strin
 }
 
 func SignUp(user models.User) (uint, error) {
+	if err := validators.SignUpValidator(user); err != nil {
+		return 0, err
+	}
+
 	usernameExists, emailExists, phoneExists, err := repository.UserExists(user.Username, user.Email, user.Phone)
 	if err != nil {
 		return 0, fmt.Errorf("failed to check existing user: %w", err)

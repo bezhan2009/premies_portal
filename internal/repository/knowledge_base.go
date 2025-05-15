@@ -20,14 +20,24 @@ func GetKnowledgeBasesWithDetails() (kb []models.KnowledgeBase, err error) {
 	return kb, nil
 }
 
-func GetKnowledgeBaseByID(kbID uint) (kb *models.KnowledgeBase, err error) {
+func GetKnowledgeBaseByID(kbID uint) (kb models.KnowledgeBase, err error) {
 	if err = db.GetDBConn().Model(&models.KnowledgeBase{}).Where("id = ?", kbID).First(&kb).Error; err != nil {
-		logger.Error.Println("[repository.GetKnowledgeBaseByID] Error getting knowledge base with ID: %v\n]")
+		logger.Error.Printf("[repository.GetKnowledgeBaseByID] Error getting knowledge base with ID: %v\n", err)
 
 		return kb, TranslateGormError(err)
 	}
 
 	return kb, nil
+}
+
+func GetKnowledgeBaseByTitle(title string) (kb *models.KnowledgeBase, err error) {
+	if err := db.GetDBConn().Model(&models.KnowledgeBase{}).Where("title = ?", title).First(&kb).Error; err != nil {
+		logger.Error.Printf("[repository.GetKnowledgeBaseByTitle] Error while getting knowledge base by title: %v", err)
+
+		return kb, err
+	}
+
+	return kb, err
 }
 
 func CreateKnowledgeBase(kb models.KnowledgeBase) (err error) {
@@ -41,7 +51,7 @@ func CreateKnowledgeBase(kb models.KnowledgeBase) (err error) {
 }
 
 func UpdateKnowledgeBase(kb models.KnowledgeBase) (err error) {
-	if err = db.GetDBConn().Model(&models.Knowledge{}).Save(&kb).Error; err != nil {
+	if err = db.GetDBConn().Updates(&kb).Error; err != nil {
 		logger.Error.Printf("[repository.UpdateKnowledgeBase] error updating knowledge base: %v\n", err)
 
 		return TranslateGormError(err)
@@ -56,7 +66,7 @@ func DeleteKnowledgeBase(kbID uint) (err error) {
 		return TranslateGormError(err)
 	}
 
-	if err = db.GetDBConn().Model(&models.Knowledge{}).Delete(&kb).Error; err != nil {
+	if err = db.GetDBConn().Delete(&kb).Error; err != nil {
 		logger.Error.Printf("[repository.DeleteKnowledgeBase] error deleting knowledge base: %v\n", err)
 
 		return TranslateGormError(err)

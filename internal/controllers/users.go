@@ -6,14 +6,25 @@ import (
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service"
 	"premiesPortal/internal/controllers/middlewares"
+	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
 	"strconv"
 )
 
 func GetAllUsers(c *gin.Context) {
-	users, err := service.GetAllUsers()
+	afterIDStr := c.Query("after")
+	if afterIDStr == "" {
+		afterIDStr = "0"
+	}
+
+	afterID, err := strconv.Atoi(afterIDStr)
 	if err != nil {
-		logger.Error.Printf("[controllers.GetAllUsers] error: %v\n", err)
+		HandleError(c, errs.ErrInvalidID)
+		return
+	}
+
+	users, err := service.GetAllUsers(uint(afterID))
+	if err != nil {
 		HandleError(c, err)
 		return
 	}

@@ -5,11 +5,14 @@ import "time"
 type Configs struct {
 	LogParams       LogParams       `json:"log_params"`
 	AppParams       AppParams       `json:"app_params"`
+	ServerParams    ServerParams    `json:"server_params"`
+	AppLogicParams  AppLogicParams  `json:"app_logic_params"`
 	PostgresParams  PostgresParams  `json:"postgres_params"`
 	RedisParams     RedisParams     `json:"redis_params"`
 	ProvidersParams ProvidersConfig `json:"providers"`
 	Clients         ClientsConfig   `json:"clients"`
-	Auth            Auth            `json:"auth"`
+	Cors            Cors            `json:"cors"`
+	AuthParams      AuthParams      `json:"auth_params"`
 }
 
 type LogParams struct {
@@ -32,6 +35,13 @@ type AppParams struct {
 	PortRun    string `json:"port_run"`
 }
 
+type ServerParams struct {
+	Addr         string `json:"addr"`
+	MaxHeaderMBs int    `json:"max_header_mbs"`
+	ReadTimeout  int    `json:"read_timeout"`
+	WriteTimeout int    `json:"write_timeout"`
+}
+
 type PostgresParams struct {
 	User     string `json:"user"`
 	Host     string `json:"host"`
@@ -48,9 +58,9 @@ type RedisParams struct {
 	TTLMinutes int    `json:"ttl_minutes"`
 }
 
-type Auth struct {
-	JwtSecretKey  string        `json:"jwt_secret_key"`
-	JwtTtlMinutes time.Duration `json:"jwt_ttl_minutes"`
+type AuthParams struct {
+	JwtTtlMinutes int `json:"jwt_ttl_minutes"`
+	JwtTtlHours   int `json:"jwt_ttl_hours"`
 }
 
 type GoogleProvider struct {
@@ -72,4 +82,20 @@ type Client struct {
 
 type ClientsConfig struct {
 	Premies Client `json:"premies"`
+}
+
+type Cors struct {
+	AllowOrigins     []string `json:"allow_origins"`
+	AllowMethods     []string `json:"allow_methods"`
+	AllowHeaders     []string `json:"allow_headers"`
+	ExposeHeaders    []string `json:"expose_headers"`
+	AllowCredentials bool     `json:"allow_credentials"`
+}
+
+type PaginationParams struct {
+	Limit int `json:"limit"`
+}
+
+type AppLogicParams struct {
+	PaginationParams PaginationParams `json:"pagination_params"`
 }

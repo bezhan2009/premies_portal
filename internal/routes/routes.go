@@ -63,6 +63,7 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	auth := r.Group("/auth")
 	{
 		auth.POST("/sign-up", middlewares.CheckUserAuthentication, middlewares.CheckSignupPerms, controllers.SignUp)
+		auth.POST("/sign-up/temp", controllers.SignUp)
 		auth.POST("/sign-in", controllers.SignIn)
 		auth.POST("/refresh", controllers.RefreshToken)
 
@@ -71,30 +72,32 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	}
 
 	// knowledge маршруты для базы знаний
-	knowledge := r.Group("/knowledge", middlewares.CheckUserAuthentication, middlewares.CheckUserKnowledgePerms)
+	knowledge := r.Group("/knowledge", middlewares.CheckUserAuthentication)
 	{
-		knowledge.POST("", controllers.CreateKnowledge)
+		knowledge.POST("", middlewares.CheckUserKnowledgePerms, controllers.CreateKnowledge)
 
 		knowledge.GET("/:id", controllers.GetKnowledgeByBaseID)
-		knowledge.PATCH("/:id", controllers.UpdateKnowledge)
-		knowledge.DELETE("/:id", controllers.DeleteKnowledge)
+		knowledge.GET("single/:id", controllers.GetKnowledgeByID)
+		knowledge.PATCH("/:id", middlewares.CheckUserKnowledgePerms, controllers.UpdateKnowledge)
+		knowledge.DELETE("/:id", middlewares.CheckUserKnowledgePerms, controllers.DeleteKnowledge)
 	}
 
 	knowledgeDocs := knowledge.Group("/docs")
 	{
-		knowledgeDocs.POST("", middlewares.SaveFileFromResponse, controllers.CreateKnowledgeDoc)
+		knowledgeDocs.POST("", middlewares.CheckUserKnowledgePerms, middlewares.SaveFileFromResponse, controllers.CreateKnowledgeDoc)
 
 		knowledgeDocs.GET("/:id", controllers.GetKnowledgeDocsByKnowledgeID)
-		knowledgeDocs.PATCH("/:id", middlewares.SaveFileFromResponse, controllers.UpdateKnowledgeDoc)
-		knowledgeDocs.DELETE("/:id", controllers.DeleteKnowledgeDoc)
+		knowledgeDocs.PATCH("/:id", middlewares.CheckUserKnowledgePerms, middlewares.SaveFileFromResponse, controllers.UpdateKnowledgeDoc)
+		knowledgeDocs.DELETE("/:id", middlewares.CheckUserKnowledgePerms, controllers.DeleteKnowledgeDoc)
 	}
 
 	knowledgeBases := knowledge.Group("/bases")
 	{
 		knowledgeBases.GET("", controllers.GetAllKnowledgeBases)
-		knowledgeBases.POST("", controllers.CreateKnowledgeBase)
-		knowledgeBases.PUT("/:id", controllers.UpdateKnowledgeBase)
-		knowledgeBases.DELETE("/:id", controllers.DeleteKnowledgeBase)
+		knowledgeBases.GET("/:id", controllers.GetKnowledgeBaseByID)
+		knowledgeBases.POST("", middlewares.CheckUserKnowledgePerms, controllers.CreateKnowledgeBase)
+		knowledgeBases.PATCH("/:id", middlewares.CheckUserKnowledgePerms, controllers.UpdateKnowledgeBase)
+		knowledgeBases.DELETE("/:id", middlewares.CheckUserKnowledgePerms, controllers.DeleteKnowledgeBase)
 	}
 
 	// cards Маршруты для карт
@@ -115,7 +118,6 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	}
 
 	// serviceQuality маршруты для качества обсулживания
-
 	serviceQuality := r.Group("service-quality", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
 	{
 		serviceQuality.POST("", controllers.AddServiceQuality)

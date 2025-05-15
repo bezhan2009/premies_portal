@@ -4,10 +4,29 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"premiesPortal/internal/app/models"
+	"premiesPortal/internal/security"
 	"premiesPortal/pkg/db"
 	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
 )
+
+func GetAllUsersPag(afterID uint) (users []models.User, err error) {
+	err = db.GetDBConn().
+		Preload("CardTurnovers").
+		Preload("CardSales").
+		Preload("OperatingActive").
+		Preload("ServiceQuality").
+		Where("id > ?", afterID).
+		Order("id ASC"). // порядок обязателен
+		Limit(security.AppSettings.AppLogicParams.PaginationParams.Limit).
+		Find(&users).Error
+	if err != nil {
+		logger.Error.Printf("[repository.GetAllUsersPag] error getting all users: %s\n", err.Error())
+		return nil, TranslateGormError(err)
+	}
+
+	return users, nil
+}
 
 func GetAllUsers() (users []models.User, err error) {
 	err = db.GetDBConn().
@@ -17,7 +36,7 @@ func GetAllUsers() (users []models.User, err error) {
 		Preload("ServiceQuality").
 		Find(&users).Error
 	if err != nil {
-		logger.Error.Printf("[repository.GetAllUsers] error getting all users: %s\n", err.Error())
+		logger.Error.Printf("[repository.GetAllUsersPag] error getting all users: %s\n", err.Error())
 		return nil, TranslateGormError(err)
 	}
 

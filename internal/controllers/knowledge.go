@@ -50,6 +50,8 @@ func CreateKnowledge(c *gin.Context) {
 		return
 	}
 
+	knowledge.ID = 0
+
 	err := service.CreateKnowledgeTable(knowledge)
 	if err != nil {
 		HandleError(c, err)

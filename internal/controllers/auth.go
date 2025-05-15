@@ -98,44 +98,13 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	if user.Password == "" {
-		HandleError(c, errs.ErrPasswordIsEmpty)
-		return
-	}
-
-	if user.Email == "" {
-		HandleError(c, errs.ErrEmailIsEmpty)
-		return
-	}
-
-	if user.Username == "" {
-		HandleError(c, errs.ErrUsernameIsEmpty)
-		return
-	}
-
-	if user.Phone == "" || len(user.Phone) != 9 {
-		HandleError(c, errs.ErrInvalidPhoneNumber)
-		return
-	}
-
-	if user.RoleID == emptyInt {
-		HandleError(c, errs.ErrRoleIsRequired)
-		return
-	}
-
-	if user.RoleID >= 4 {
-		HandleError(c, errs.ErrWrongRoleID)
-		return
-	}
-
 	userID, err := service.SignUp(models.User{
-		Username:  user.Username,
-		Email:     user.Email,
-		Password:  user.Password,
-		Phone:     user.Phone,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		RoleID:    int(user.RoleID),
+		Username: user.Username,
+		Email:    user.Email,
+		Password: user.Password,
+		Phone:    user.Phone,
+		FullName: user.FullName,
+		RoleID:   int(user.RoleID),
 	})
 	if err != nil {
 		if errors.Is(err, errs.ErrRecordNotFound) {
