@@ -5,7 +5,7 @@ from dataclasses import dataclass
 class DatabaseConfig:
     host: str
     port: int
-    user: str
+    worker: str
     password: str
     name: str
 
