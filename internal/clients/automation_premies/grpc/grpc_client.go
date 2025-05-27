@@ -6,6 +6,7 @@ import (
 	cardPricesServ "premiesPortal/internal/app/grpc/gen/go/card_prices"
 	cardsServ "premiesPortal/internal/app/grpc/gen/go/cards"
 	mobileBankServ "premiesPortal/internal/app/grpc/gen/go/mobile_bank"
+	reportServ "premiesPortal/internal/app/grpc/gen/go/reports"
 	tusServ "premiesPortal/internal/app/grpc/gen/go/tus"
 
 	"google.golang.org/grpc/codes"
@@ -21,6 +22,7 @@ type Client struct {
 	MobileBankApi mobileBankServ.MobileBankServiceClient
 	TusApi        tusServ.TusServiceClient
 	CardPricesApi cardPricesServ.CardPricesServiceClient
+	ReportApi     reportServ.ReportsServiceClient
 }
 
 var client *Client
@@ -53,6 +55,7 @@ func New(ctx context.Context,
 		MobileBankApi: mobileBankServ.NewMobileBankServiceClient(conn),
 		TusApi:        tusServ.NewTusServiceClient(conn),
 		CardPricesApi: cardPricesServ.NewCardPricesServiceClient(conn),
+		ReportApi:     reportServ.NewReportsServiceClient(conn),
 	}
 
 	return nil

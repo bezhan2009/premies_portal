@@ -14,7 +14,7 @@ type OfficeUser struct {
 	gorm.Model
 
 	OfficeID int
-	Office   Office `gorm:"foreignKey:OfficeID"`
-	UserID   int
-	User     User `gorm:"foreignKey:UserID"`
+	Office   Office `gorm:"foreignkey:OfficeID"`
+	WorkerID int
+	Worker   Worker `gorm:"foreignkey:WorkerID"`
 }

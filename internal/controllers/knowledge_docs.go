@@ -46,11 +46,8 @@ func GetKnowledgeDocsByID(c *gin.Context) {
 
 func CreateKnowledgeDoc(c *gin.Context) {
 	var knowledgeDoc models.KnowledgeDocs
-	if err := c.ShouldBindJSON(&knowledgeDoc); err != nil {
-		HandleError(c, errs.ErrValidationFailed)
-		return
-	}
-
+	knowledgeDoc.Title = c.GetString(middlewares.KnowledgeDocTitle)
+	knowledgeDoc.KnowledgeID = c.GetUint(middlewares.KnowledgeDocKnowledgeID)
 	knowledgeDoc.FilePath = c.GetString(middlewares.UploadedFilePath)
 
 	err := service.CreateKnowledgeDocs(knowledgeDoc)
@@ -59,7 +56,7 @@ func CreateKnowledgeDoc(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Knowledge doc created successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Knowledge doc created Successfully"})
 }
 
 func UpdateKnowledgeDoc(c *gin.Context) {
@@ -71,13 +68,15 @@ func UpdateKnowledgeDoc(c *gin.Context) {
 	}
 
 	var knowledgeDoc models.KnowledgeDocs
-	if err := c.ShouldBindJSON(&knowledgeDoc); err != nil {
-		HandleError(c, errs.ErrValidationFailed)
-		return
-	}
 
+	knowledgeDoc.Title = c.GetString(middlewares.KnowledgeDocTitle)
+	knowledgeDoc.KnowledgeID = c.GetUint(middlewares.KnowledgeDocKnowledgeID)
 	knowledgeDoc.ID = uint(knowledgeDocId)
-	knowledgeDoc.FilePath = c.GetString(middlewares.UploadedFilePath)
+
+	newFilePath := c.GetString(middlewares.UploadedFilePath)
+	if newFilePath != "" {
+		knowledgeDoc.FilePath = newFilePath
+	}
 
 	err = service.UpdateKnowledgeDocs(knowledgeDoc)
 	if err != nil {
@@ -85,7 +84,7 @@ func UpdateKnowledgeDoc(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Update Knowledge Doc Success"})
+	c.JSON(http.StatusOK, gin.H{"message": "Update Knowledge Doc Successfully"})
 }
 
 func DeleteKnowledgeDoc(c *gin.Context) {

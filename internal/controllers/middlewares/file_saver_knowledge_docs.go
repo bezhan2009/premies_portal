@@ -22,7 +22,7 @@ const (
 	KnowledgeDocKnowledgeID = "knowledge_doc_knowledge_id"
 )
 
-func SaveFileFromResponse(c *gin.Context) {
+func SaveFileFromResponseKnowledgeDocs(c *gin.Context) {
 	// парсим JSON-ответ
 	var response models.KnowledgeDocs
 	if err := c.ShouldBindJSON(&response); err != nil {
@@ -40,7 +40,7 @@ func SaveFileFromResponse(c *gin.Context) {
 	subfolder := strings.TrimPrefix(ext, ".")
 	dir := filepath.Join("uploads", subfolder)
 	if err := os.MkdirAll(dir, 0755); err != nil {
-		logger.Error.Printf("[middlewares.SaveFileFromResponse] mkdir error: %s", err.Error())
+		logger.Error.Printf("[middlewares.SaveFileFromResponseKnowledgeDocs] mkdir error: %s", err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": errs.ErrSomethingWentWrong.Error()})
 		return
 	}
@@ -48,7 +48,7 @@ func SaveFileFromResponse(c *gin.Context) {
 	// открываем исходный файл
 	src, err := os.Open(srcPath)
 	if err != nil {
-		logger.Error.Printf("[middlewares.SaveFileFromResponse] open error: %s", err.Error())
+		logger.Error.Printf("[middlewares.SaveFileFromResponseKnowledgeDocs] open error: %s", err.Error())
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": errs.ErrFileNotFound.Error()})
 		return
 	}
@@ -63,14 +63,14 @@ func SaveFileFromResponse(c *gin.Context) {
 	dstPath := filepath.Join(dir, newName)
 	dst, err := os.Create(dstPath)
 	if err != nil {
-		logger.Error.Printf("[middlewares.SaveFileFromResponse] create error: %s", err.Error())
+		logger.Error.Printf("[middlewares.SaveFileFromResponseKnowledgeDocs] create error: %s", err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": errs.ErrSomethingWentWrong.Error()})
 		return
 	}
 	defer dst.Close()
 
 	if _, err := io.Copy(dst, src); err != nil {
-		logger.Error.Printf("[middlewares.SaveFileFromResponse] copy error: %s", err.Error())
+		logger.Error.Printf("[middlewares.SaveFileFromResponseKnowledgeDocs] copy error: %s", err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": errs.ErrSomethingWentWrong.Error()})
 		return
 	}

@@ -5,5 +5,7 @@ import "gorm.io/gorm"
 type Overdraft struct {
 	gorm.Model
 
-	OverdraftCount uint `json:"overdraft_count"`
+	OverdraftPerm float64 `json:"overdraft_perm" gorm:"default:0.0"`
+	WorkerID      uint    `json:"worker_id"`
+	Worker        Worker  `gorm:"foreignKey: WorkerID" json:"worker"`
 }

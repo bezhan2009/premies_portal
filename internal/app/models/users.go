@@ -14,11 +14,6 @@ type User struct {
 
 	RoleID int  `json:"role_id" gorm:"not null"`
 	Role   Role `json:"-" gorm:"foreignKey:RoleID"`
-
-	CardTurnovers   []CardTurnovers   `gorm:"foreignKey:WorkerID"`
-	CardSales       []CardSales       `gorm:"foreignKey:WorkerID"`
-	OperatingActive []OperatingActive `gorm:"foreignKey:WorkerID"`
-	ServiceQuality  []ServiceQuality  `gorm:"foreignKey:WorkerID"`
 }
 
 type Role struct {

@@ -10,53 +10,47 @@ import (
 	"premiesPortal/pkg/logger"
 )
 
-func GetAllUsersPag(afterID uint) (users []models.User, err error) {
+func GetAllWorkersPag(afterID uint) (workers []models.Worker, err error) {
 	err = db.GetDBConn().
 		Preload("CardTurnovers").
 		Preload("CardSales").
-		Preload("OperatingActive").
 		Preload("ServiceQuality").
 		Where("id > ?", afterID).
 		Order("id ASC"). // порядок обязателен
 		Limit(security.AppSettings.AppLogicParams.PaginationParams.Limit).
-		Find(&users).Error
+		Find(&workers).Error
 	if err != nil {
-		logger.Error.Printf("[repository.GetAllUsersPag] error getting all users: %s\n", err.Error())
+		logger.Error.Printf("[repository.GetAllWorkersPag] error getting all workers: %s\n", err.Error())
 		return nil, TranslateGormError(err)
 	}
 
-	return users, nil
+	return workers, nil
 }
 
 func GetAllUsers() (users []models.User, err error) {
-	err = db.GetDBConn().
-		Preload("CardTurnovers").
-		Preload("CardSales").
-		Preload("OperatingActive").
-		Preload("ServiceQuality").
-		Find(&users).Error
+	err = db.GetDBConn().Find(&users).Error
 	if err != nil {
-		logger.Error.Printf("[repository.GetAllUsersPag] error getting all users: %s\n", err.Error())
+		logger.Error.Printf("[repository.GetAllWorkersPag] error getting all users: %s\n", err.Error())
 		return nil, TranslateGormError(err)
 	}
 
 	return users, nil
 }
 
-func GetUserByID(month int, id string) (user models.User, err error) {
+func GetWorkerByID(month int, id string) (worker models.Worker, err error) {
 	err = db.GetDBConn().
 		Preload("CardTurnovers", "EXTRACT(MONTH FROM created_at) = ?", month).
 		Preload("CardSales", "EXTRACT(MONTH FROM created_at) = ?", month).
-		Preload("OperatingActive", "EXTRACT(MONTH FROM created_at) = ?", month).
 		Preload("ServiceQuality", "EXTRACT(MONTH FROM created_at) = ?", month).
+		Preload("User").
 		Where("id = ?", id).
-		First(&user).Error
+		First(&worker).Error
 
 	if err != nil {
-		logger.Error.Printf("[repository.GetUserByID] error getting user by id: %v\n", err)
-		return user, TranslateGormError(err)
+		logger.Error.Printf("[repository.GetWorkerByID] error getting worker by id: %v\n", err)
+		return worker, TranslateGormError(err)
 	}
-	return user, nil
+	return worker, nil
 }
 
 func GetUserByUsername(username string) (*models.User, error) {

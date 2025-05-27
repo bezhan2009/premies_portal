@@ -35,5 +35,5 @@ type KnowledgeDocs struct {
 	FilePath string `json:"file_path" gorm:"not null"`
 
 	KnowledgeID uint      `json:"knowledge_id" gorm:"not null"`
-	Knowledge   Knowledge `json:"knowledge" gorm:"foreignKey:KnowledgeID"`
+	Knowledge   Knowledge `json:"-" gorm:"foreignKey:KnowledgeID"`
 }

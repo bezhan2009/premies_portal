@@ -21,7 +21,10 @@ func GetKnowledgeBasesWithDetails() (kb []models.KnowledgeBase, err error) {
 }
 
 func GetKnowledgeBaseByID(kbID uint) (kb models.KnowledgeBase, err error) {
-	if err = db.GetDBConn().Model(&models.KnowledgeBase{}).Where("id = ?", kbID).First(&kb).Error; err != nil {
+	if err = db.GetDBConn().
+		Preload("Knowledge").
+		Preload("Knowledge.KnowledgeDocs").
+		Where("id = ?", kbID).First(&kb).Error; err != nil {
 		logger.Error.Printf("[repository.GetKnowledgeBaseByID] Error getting knowledge base with ID: %v\n", err)
 
 		return kb, TranslateGormError(err)

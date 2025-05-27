@@ -32,13 +32,14 @@ func Migrate() error {
 	err := dbConn.AutoMigrate(
 		&models2.Role{},
 		&models2.User{},
+		&models2.Worker{},
 		&models2.Office{},
 		&models2.OfficeUser{},
 		&models2.CardSales{},
 		&models2.MobileBankSales{},
 		&models2.CardTurnovers{},
-		&models2.OperatingActive{},
 		&models2.ServiceQuality{},
+		&models2.Overdraft{},
 		&models2.History{},
 
 		&models2.KnowledgeBase{},

@@ -12,10 +12,9 @@ type History struct {
 	OperatingActiveID int
 	ServiceQualityID  int
 
-	CardSales       CardSales       `gorm:"foreignKey:CardSalesID"`
-	CardTurnovers   CardTurnovers   `gorm:"foreignKey:CardTurnoversID"`
-	OperatingActive OperatingActive `gorm:"foreignKey:OperatingActiveID"`
-	ServiceQuality  ServiceQuality  `gorm:"foreignKey:ServiceQualityID"`
+	CardSales      CardSales      `gorm:"foreignKey:CardSalesID"`
+	CardTurnovers  CardTurnovers  `gorm:"foreignKey:CardTurnoversID"`
+	ServiceQuality ServiceQuality `gorm:"foreignKey:ServiceQualityID"`
 
 	WorkerID uint `gorm:"not null"`
 	Worker   User `gorm:"foreignkey:WorkerID"`

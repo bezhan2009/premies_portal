@@ -5,16 +5,13 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/joho/godotenv"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"os"
 	"os/signal"
 	"premiesPortal/configs"
-	"premiesPortal/internal/clients/sso/grpc"
 	"premiesPortal/internal/security"
 	"premiesPortal/internal/server"
 	"premiesPortal/pkg/db"
 	"premiesPortal/pkg/logger"
-	"premiesPortal/pkg/utils"
 	"syscall"
 )
 
@@ -70,12 +67,12 @@ func main() {
 		panic(err)
 	}
 
-	response, err := grpc.GetClient().CleanCards(utils.Context, &emptypb.Empty{})
-	if err != nil {
-		fmt.Println(err)
-	}
+	//response, err := grpc.GetClient().CleanCards(utils.Context, &emptypb.Empty{})
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
 
-	fmt.Println(response)
+	//fmt.Println(response)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)

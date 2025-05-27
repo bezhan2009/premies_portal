@@ -44,6 +44,8 @@ func handleBadRequestErrors(err error) bool {
 func handleNotFoundErrors(err error) bool {
 	return errors.Is(err, errs.ErrRecordNotFound) ||
 		errors.Is(err, errs.ErrUserNotFound) ||
+		errors.Is(err, errs.ErrFileNotFound) ||
+		errors.Is(err, errs.ErrTempReportNotFound) ||
 		errors.Is(err, errs.ErrKnowledgeBaseNotFound)
 }
 
@@ -52,6 +54,12 @@ func handleUnauthorizedErrors(err error) bool {
 	return errors.Is(err, errs.ErrInvalidToken) ||
 		errors.Is(err, errs.ErrUnauthorized) ||
 		errors.Is(err, errs.ErrRefreshTokenExpired)
+}
+
+// Обработка ошибок, которые приводят к статусу 500 (Internal Server Error)
+func handleInternalErrors(err error) bool {
+	return errors.Is(err, errs.ErrSomethingWentWrong) ||
+		errors.Is(err, errs.ErrTempReportNotFound)
 }
 
 // HandleError Основная функция обработки ошибок
@@ -64,6 +72,8 @@ func HandleError(c *gin.Context, err error) {
 		c.JSON(http.StatusNotFound, newErrorResponse(err.Error()))
 	} else if handleUnauthorizedErrors(err) {
 		c.JSON(http.StatusUnauthorized, newErrorResponse(err.Error()))
+	} else if handleInternalErrors(err) {
+		c.JSON(http.StatusInternalServerError, newErrorResponse(err.Error()))
 	} else {
 		logger.Error.Printf("[controllers.HandleError] Err: %s", err)
 		c.JSON(http.StatusInternalServerError, newErrorResponse(errs.ErrSomethingWentWrong.Error()))

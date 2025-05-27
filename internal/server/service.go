@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"premiesPortal/internal/clients/sso/grpc"
+	"premiesPortal/internal/clients/automation_premies/grpc"
 	"premiesPortal/internal/routes"
 	"premiesPortal/internal/security"
 	"premiesPortal/pkg/db"
@@ -30,13 +30,6 @@ func ServiceStart() (err error) {
 		AllowCredentials: security.AppSettings.Cors.AllowCredentials,
 	}))
 
-	mainServer = new(Server)
-	go func() {
-		if err = mainServer.Run(security.AppSettings.AppParams.PortRun, routes.InitRoutes(router)); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Error while starting HTTP Service: %s", err)
-		}
-	}()
-
 	err = grpc.New(
 		utils.Context,
 		security.AppSettings.Clients.Premies.ClientAddress,
@@ -46,6 +39,13 @@ func ServiceStart() (err error) {
 	if err != nil {
 		return err
 	}
+
+	mainServer = new(Server)
+	go func() {
+		if err = mainServer.Run(security.AppSettings.AppParams.PortRun, routes.InitRoutes(router)); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Error while starting HTTP Service: %s", err)
+		}
+	}()
 
 	return nil
 }

@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-func GetAllUsers(afterID uint) (users []models.User, err error) {
-	users, err = repository.GetAllUsersPag(afterID)
+func GetAllUsers(afterID uint) (users []models.Worker, err error) {
+	users, err = repository.GetAllWorkersPag(afterID)
 	if err != nil {
 		return nil, err
 	}
@@ -16,8 +16,8 @@ func GetAllUsers(afterID uint) (users []models.User, err error) {
 	return users, nil
 }
 
-func GetUserByID(id uint) (user models.User, err error) {
-	user, err = repository.GetUserByID(int(time.Now().Month()), strconv.Itoa(int(id)))
+func GetUserByID(id uint) (user models.Worker, err error) {
+	user, err = repository.GetWorkerByID(int(time.Now().Month()), strconv.Itoa(int(id)))
 	if err != nil {
 		return user, err
 	}

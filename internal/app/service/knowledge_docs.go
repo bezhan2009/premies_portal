@@ -14,10 +14,10 @@ func GetKnowledgeDocByID(knowledgeDocsID uint) (knowledgeDocs models.KnowledgeDo
 	return knowledgeDocs, nil
 }
 
-func GetKnowledgeDocsByKnowledgeID(knowledgeID uint) (knowledgeDocs models.KnowledgeDocs, err error) {
+func GetKnowledgeDocsByKnowledgeID(knowledgeID uint) (knowledgeDocs []models.KnowledgeDocs, err error) {
 	knowledgeDocs, err = repository.GetKnowledgeDocsByKnowledgeID(knowledgeID)
 	if err != nil {
-		return models.KnowledgeDocs{}, err
+		return []models.KnowledgeDocs{}, err
 	}
 
 	return knowledgeDocs, nil

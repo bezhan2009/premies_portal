@@ -9,6 +9,7 @@ import (
 	"os"
 	_ "premiesPortal/docs"
 	"premiesPortal/internal/controllers"
+	"premiesPortal/internal/controllers/automation"
 	"premiesPortal/internal/controllers/middlewares"
 	"premiesPortal/internal/security"
 )
@@ -84,11 +85,21 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 
 	knowledgeDocs := knowledge.Group("/docs")
 	{
-		knowledgeDocs.POST("", middlewares.CheckUserKnowledgePerms, middlewares.SaveFileFromResponse, controllers.CreateKnowledgeDoc)
+		knowledgeDocs.POST("", middlewares.CheckUserKnowledgePerms, middlewares.SaveFileFromResponseKnowledgeDocs, controllers.CreateKnowledgeDoc)
 
 		knowledgeDocs.GET("/:id", controllers.GetKnowledgeDocsByKnowledgeID)
-		knowledgeDocs.PATCH("/:id", middlewares.CheckUserKnowledgePerms, middlewares.SaveFileFromResponse, controllers.UpdateKnowledgeDoc)
-		knowledgeDocs.DELETE("/:id", middlewares.CheckUserKnowledgePerms, controllers.DeleteKnowledgeDoc)
+
+		knowledgeDocs.PATCH("/:id",
+			middlewares.CheckUserKnowledgePerms,
+			middlewares.KnowledgeDocsExists,
+			middlewares.SaveFileFromResponseKnowledgeDocs,
+			controllers.UpdateKnowledgeDoc)
+
+		knowledgeDocs.DELETE("/:id",
+			middlewares.CheckUserKnowledgePerms,
+			middlewares.KnowledgeDocsExists,
+			middlewares.DeleteFileKnowledgeDocs,
+			controllers.DeleteKnowledgeDoc)
 	}
 
 	knowledgeBases := knowledge.Group("/bases")
@@ -125,13 +136,34 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 		serviceQuality.DELETE("/:id", controllers.DeleteServiceQuality)
 	}
 
-	// operatingActive маршруты активности
+	automationRoutes := r.Group("automation", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
 
-	operatingActive := r.Group("operating-active")
+	cardsAutomation := automationRoutes.Group("cards")
 	{
-		operatingActive.POST("", controllers.AddOperatingActive)
-		operatingActive.PATCH("/:id", controllers.UpdateOperatingActive)
-		operatingActive.DELETE("/:id", controllers.DeleteOperatingActive)
+		cardsAutomation.POST("", automation.UploadCards)
+		cardsAutomation.DELETE("", automation.CleanCards)
+	}
+
+	cardPricesAutomation := automationRoutes.Group("card-prices")
+	{
+		cardPricesAutomation.POST("", automation.UploadCardPrices)
+	}
+
+	mobileBankAutomation := automationRoutes.Group("mobile-bank")
+	{
+		mobileBankAutomation.POST("", automation.UploadMobileBankData)
+		mobileBankAutomation.DELETE("", automation.CleanMobileBankTable)
+	}
+
+	tusAutomation := automationRoutes.Group("call-center")
+	{
+		tusAutomation.POST("", automation.UploadTusData)
+		tusAutomation.DELETE("", automation.CleanTusTable)
+	}
+
+	reportsAutomation := automationRoutes.Group("reports")
+	{
+		reportsAutomation.POST("", automation.CreateZIPReports)
 	}
 
 	return r

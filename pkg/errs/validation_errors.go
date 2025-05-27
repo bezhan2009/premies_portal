@@ -13,6 +13,7 @@ var (
 	ErrInvalidTitle                = errors.New("ErrInvalidTitle")
 	ErrInvalidToken                = errors.New("ErrInvalidToken")
 	ErrRefreshTokenExpired         = errors.New("ErrRefreshTokenExpired")
+	ErrFilePathIsRequired          = errors.New("ErrFilePathIsRequired")
 	ErrInvalidDescription          = errors.New("ErrInvalidDescription")
 	ErrUsernameCanContainOnlyASCII = errors.New("ErrUsernameCanContainOnlyASCII")
 	ErrInvalidBaseID               = errors.New("ErrInvalidBaseID")

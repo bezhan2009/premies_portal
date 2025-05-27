@@ -10,14 +10,14 @@ func GetKnowledgeDocByID(knowledgeDocsID uint) (knowledgeDocs models.KnowledgeDo
 	if err = db.GetDBConn().Model(&models.KnowledgeDocs{}).Where("id = ?", knowledgeDocsID).First(&knowledgeDocs).Error; err != nil {
 		logger.Error.Printf("[repository.GetKnowledgeDocByID] Error while getting knowledge docs by id: %v\n", err)
 
-		return knowledgeDocs, err
+		return knowledgeDocs, TranslateGormError(err)
 	}
 
-	return knowledgeDocs, err
+	return knowledgeDocs, nil
 }
 
-func GetKnowledgeDocsByKnowledgeID(knowledgeID uint) (knowledgeDocs models.KnowledgeDocs, err error) {
-	if err = db.GetDBConn().Model(&models.KnowledgeDocs{}).Where("knowledge_id = ?", knowledgeID).First(&knowledgeDocs).Error; err != nil {
+func GetKnowledgeDocsByKnowledgeID(knowledgeID uint) (knowledgeDocs []models.KnowledgeDocs, err error) {
+	if err = db.GetDBConn().Model(&models.KnowledgeDocs{}).Where("knowledge_id = ?", knowledgeID).Find(&knowledgeDocs).Error; err != nil {
 		logger.Error.Printf("[repository.GetKnowledgeDocsByKnowledgeID] Error while getting knowledge docs: %v\n", err)
 
 		return knowledgeDocs, TranslateGormError(err)
@@ -37,7 +37,7 @@ func CreateKnowledgeDocs(knowledgeDocs models.KnowledgeDocs) (err error) {
 }
 
 func UpdateKnowledgeDocs(knowledgeDocs models.KnowledgeDocs) (err error) {
-	if err = db.GetDBConn().Model(&models.KnowledgeDocs{}).Updates(knowledgeDocs).Error; err != nil {
+	if err = db.GetDBConn().Model(&models.KnowledgeDocs{}).Where("id = ?", knowledgeDocs.ID).Updates(knowledgeDocs).Error; err != nil {
 		logger.Error.Printf("[repository.UpdateKnowledgeDocs] Error while updating knowledge doc: %v\n", err)
 
 		return TranslateGormError(err)
