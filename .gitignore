@@ -4,6 +4,7 @@
 
 # Logs
 logs
+uploads
 
 # Security Files
 configs/configs.json
