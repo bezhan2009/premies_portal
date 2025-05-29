@@ -42,7 +42,7 @@ func ServiceStart() (err error) {
 
 	mainServer = new(Server)
 	go func() {
-		if err = mainServer.Run(security.AppSettings.AppParams.PortRun, routes.InitRoutes(router)); err != nil && err != http.ErrServerClosed {
+		if err := mainServer.Run(security.AppSettings.AppParams.PortRun, routes.InitRoutes(router)); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Error while starting HTTP Service: %s", err)
 		}
 	}()
@@ -61,6 +61,14 @@ func ServiceShutdown() {
 	err := db.CloseDBConn()
 	if err != nil {
 		strErr := fmt.Sprintf("Error closing database connection: %s", err.Error())
+		fmt.Println(red(strErr))
+		logger.Error.Println(strErr)
+	}
+
+	// Закрытие соединения с GRPC сервисом python для автоматизации
+	err = grpc.GrpcConnClose()
+	if err != nil {
+		strErr := fmt.Sprintf("Error closing grpc service python automation connection: %s", err.Error())
 		fmt.Println(red(strErr))
 		logger.Error.Println(strErr)
 	}

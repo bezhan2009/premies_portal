@@ -72,6 +72,28 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 		auth.GET("/google/callback", controllers.GoogleCallback)
 	}
 
+	// office Маршруты для офисов
+	office := r.Group("/office", middlewares.CheckUserAuthentication)
+	{
+		office.GET("", controllers.GetAllOffices)
+		office.GET("/:id", controllers.GetOfficeByID)
+
+		office.POST("", middlewares.CheckUserOperator, controllers.CreateOffice)
+		office.PATCH("/:id", middlewares.CheckUserOperator, controllers.UpdateOffice)
+		office.DELETE("/:id", middlewares.CheckUserOperator, controllers.DeleteOffice)
+	}
+
+	// officeUsers Маршруты для рабочих офисов
+	officeUsers := office.Group("/users")
+	{
+		officeUsers.GET("/:id", controllers.GetAllOfficeUsers)
+		officeUsers.GET("single/:id", controllers.GetOfficeUserByID)
+
+		officeUsers.POST("", middlewares.CheckUserOperator, controllers.AddUserToOffice)
+		officeUsers.DELETE("", middlewares.CheckUserOperator, controllers.DeleteUserFromOffice)
+
+	}
+
 	// knowledge маршруты для базы знаний
 	knowledge := r.Group("/knowledge", middlewares.CheckUserAuthentication)
 	{

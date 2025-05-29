@@ -9,6 +9,7 @@ type Worker struct {
 	Position      string  `json:"position"`
 	Plan          uint    `json:"plan" gorm:"default:0"`
 	SalaryProject uint    `json:"salary_project" gorm:"default:0"`
+	PlaceWork     string  `json:"place_work"`
 
 	UserID uint `json:"user_id" gorm:"default:0"`
 	User   User `json:"-"`

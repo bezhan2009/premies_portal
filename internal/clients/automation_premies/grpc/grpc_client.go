@@ -8,6 +8,7 @@ import (
 	mobileBankServ "premiesPortal/internal/app/grpc/gen/go/mobile_bank"
 	reportServ "premiesPortal/internal/app/grpc/gen/go/reports"
 	tusServ "premiesPortal/internal/app/grpc/gen/go/tus"
+	"premiesPortal/pkg/logger"
 
 	"google.golang.org/grpc/codes"
 
@@ -26,6 +27,7 @@ type Client struct {
 }
 
 var client *Client
+var conn *grpc.ClientConn
 
 func New(ctx context.Context,
 	addr string,
@@ -34,19 +36,22 @@ func New(ctx context.Context,
 ) error {
 	const op = "grpc.New"
 
+	var err error
+
 	retryOpts := []grpcretry.CallOption{
 		grpcretry.WithCodes(codes.NotFound, codes.Aborted, codes.DeadlineExceeded),
 		grpcretry.WithMax(uint(retriesCount)),
 		grpcretry.WithPerRetryTimeout(timeout),
 	}
 
-	conn, err := grpc.DialContext(ctx,
+	conn, err = grpc.DialContext(ctx,
 		addr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithChainUnaryInterceptor(
 			grpcretry.UnaryClientInterceptor(retryOpts...)),
 	)
 	if err != nil {
+		logger.Error.Printf("[%s]: dial failed: %s", op, err)
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -63,4 +68,13 @@ func New(ctx context.Context,
 
 func GetClient() *Client {
 	return client
+}
+
+func GrpcConnClose() (err error) {
+	err = conn.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

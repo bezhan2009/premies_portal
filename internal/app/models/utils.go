@@ -8,3 +8,8 @@ type ResponseWithStatusCode struct {
 	Resp       interface{} `json:"response"`
 	StatusCode int         `json:"status_code"`
 }
+
+type OfficeAndUsers struct {
+	Office      Office       `json:"office"`
+	OfficeUsers []OfficeUser `json:"office_user"`
+}

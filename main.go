@@ -57,22 +57,10 @@ func main() {
 		panic(err)
 	}
 
-	//err = db.InitializeRedis(security.AppSettings.RedisParams)
-	//if err != nil {
-	//	panic(err)
-	//}
-
 	err = server.ServiceStart()
 	if err != nil {
 		panic(err)
 	}
-
-	//response, err := grpc.GetClient().CleanCards(utils.Context, &emptypb.Empty{})
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-
-	//fmt.Println(response)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)

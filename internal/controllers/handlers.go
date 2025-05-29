@@ -27,6 +27,9 @@ func handleBadRequestErrors(err error) bool {
 		errors.Is(err, errs.ErrIncorrectUsernameOrPassword) ||
 		errors.Is(err, errs.ErrInvalidCredentials) ||
 		errors.Is(err, errs.ErrPathParametrized) ||
+		errors.Is(err, errs.ErrDirectorIDIsEmpty) ||
+		errors.Is(err, errs.ErrUserIDIsEmpty) ||
+		errors.Is(err, errs.ErrOfficeIDIsEmpty) ||
 		errors.Is(err, errs.ErrInvalidPrice) ||
 		errors.Is(err, errs.ErrInvalidID) ||
 		errors.Is(err, errs.ErrInvalidField) ||

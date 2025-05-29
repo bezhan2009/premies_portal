@@ -17,6 +17,7 @@ func SeedRoles(db *gorm.DB) error {
 		{ID: 5, Name: "Director"},
 		{ID: 6, Name: "Card Seller"},
 		{ID: 7, Name: "Universal"},
+		{ID: 8, Name: "Credit seller"},
 	}
 
 	for _, role := range roles {
