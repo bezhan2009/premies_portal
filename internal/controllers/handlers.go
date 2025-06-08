@@ -19,8 +19,13 @@ func handleBadRequestErrors(err error) bool {
 		errors.Is(err, errs.ErrPhoneUniquenessFailed) ||
 		errors.Is(err, errs.ErrKnowledgeAlreadyExists) ||
 		errors.Is(err, errs.ErrKnowledgeBaseUniquenessFailed) ||
+		errors.Is(err, errs.ErrYouAreNotWorker) ||
+		errors.Is(err, errs.ErrYouAreWorker) ||
 		errors.Is(err, errs.ErrWrongRoleID) ||
 		errors.Is(err, errs.ErrInvalidBaseID) ||
+		errors.Is(err, errs.ErrInvalidAfterID) ||
+		errors.Is(err, errs.ErrInvalidMonth) ||
+		errors.Is(err, errs.ErrInvalidYear) ||
 		errors.Is(err, errs.ErrFirstNameIsRequired) ||
 		errors.Is(err, errs.ErrLastNameIsRequired) ||
 		errors.Is(err, errs.ErrEmailIsRequired) ||

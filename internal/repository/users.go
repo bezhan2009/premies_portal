@@ -10,21 +10,19 @@ import (
 	"premiesPortal/pkg/logger"
 )
 
-func GetAllWorkersPag(afterID uint) (workers []models.Worker, err error) {
+func GetAllUsersPag(afterID uint) (users []models.User, err error) {
 	err = db.GetDBConn().
-		Preload("CardTurnovers").
-		Preload("CardSales").
-		Preload("ServiceQuality").
+		Model(&models.User{}).
 		Where("id > ?", afterID).
-		Order("id ASC"). // порядок обязателен
+		Order("id ASC").
 		Limit(security.AppSettings.AppLogicParams.PaginationParams.Limit).
-		Find(&workers).Error
+		Find(&users).Error
 	if err != nil {
-		logger.Error.Printf("[repository.GetAllWorkersPag] error getting all workers: %s\n", err.Error())
+		logger.Error.Printf("[repository.GetAllUsersPag] error getting all users: %s\n", err.Error())
 		return nil, TranslateGormError(err)
 	}
 
-	return workers, nil
+	return users, nil
 }
 
 func GetAllUsers() (users []models.User, err error) {
@@ -37,20 +35,19 @@ func GetAllUsers() (users []models.User, err error) {
 	return users, nil
 }
 
-func GetWorkerByID(month int, id string) (worker models.Worker, err error) {
-	err = db.GetDBConn().
-		Preload("CardTurnovers", "EXTRACT(MONTH FROM created_at) = ?", month).
-		Preload("CardSales", "EXTRACT(MONTH FROM created_at) = ?", month).
-		Preload("ServiceQuality", "EXTRACT(MONTH FROM created_at) = ?", month).
-		Preload("User").
-		Where("id = ?", id).
-		First(&worker).Error
+func GetUserByID(userID uint) (user models.User, err error) {
+	err = db.GetDBConn().Where("id = ?", userID).First(&user).Error
 
 	if err != nil {
-		logger.Error.Printf("[repository.GetWorkerByID] error getting worker by id: %v\n", err)
-		return worker, TranslateGormError(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return user, errs.ErrUserNotFound
+		}
+
+		logger.Error.Printf("[repository.GetUserByID] error getting user by username: %v\n", err)
+		return user, TranslateGormError(err)
 	}
-	return worker, nil
+
+	return user, nil
 }
 
 func GetUserByUsername(username string) (*models.User, error) {
@@ -62,7 +59,7 @@ func GetUserByUsername(username string) (*models.User, error) {
 			return nil, errs.ErrUserNotFound
 		}
 		logger.Error.Printf("[repository.GetUserByUsername] error getting user by username: %v\n", err)
-		return nil, err
+		return nil, TranslateGormError(err)
 	}
 	return &user, nil
 }
@@ -90,13 +87,11 @@ func UserExists(username, email, phone string) (bool, bool, bool, error) {
 }
 
 func CreateUser(user models.User) (userDB models.User, err error) {
-	//logger.Debug.Println(user.ID)
 	if err = db.GetDBConn().Create(&user).Error; err != nil {
 		logger.Error.Printf("[repository.CreateUser] error creating user: %v\n", err)
 		return userDB, TranslateGormError(err)
 	}
 
-	//logger.Debug.Println(user.ID)
 	userDB = user
 	return userDB, nil
 }
@@ -104,6 +99,9 @@ func CreateUser(user models.User) (userDB models.User, err error) {
 func GetUserByUsernameAndPassword(username string, password string) (user models.User, err error) {
 	err = db.GetDBConn().Where("username = ? AND password = ?", username, password).First(&user).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return user, errs.ErrRecordNotFound
+		}
 		logger.Error.Printf("[repository.GetUserByUsernameAndPassword] error getting user by username and password: %v\n", err)
 		return user, TranslateGormError(err)
 	}
@@ -114,6 +112,9 @@ func GetUserByUsernameAndPassword(username string, password string) (user models
 func GetUserByEmailAndPassword(email string, password string) (user models.User, err error) {
 	err = db.GetDBConn().Where("email = ? AND password = ?", email, password).First(&user).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return user, errs.ErrRecordNotFound
+		}
 		logger.Error.Printf("[repository.GetUserByEmailAndPassword] error getting user by email and password: %v\n", err)
 		return user, TranslateGormError(err)
 	}

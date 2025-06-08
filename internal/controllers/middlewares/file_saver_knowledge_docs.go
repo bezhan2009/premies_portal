@@ -16,12 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const (
-	UploadedFilePath        = "uploaded_file_path"
-	KnowledgeDocTitle       = "knowledge_doc_title"
-	KnowledgeDocKnowledgeID = "knowledge_doc_knowledge_id"
-)
-
 func SaveFileFromResponseKnowledgeDocs(c *gin.Context) {
 	// парсим JSON-ответ
 	var response models.KnowledgeDocs

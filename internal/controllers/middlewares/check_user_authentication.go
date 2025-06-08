@@ -7,12 +7,6 @@ import (
 	"strings"
 )
 
-const (
-	authorizationHeader = "Authorization"
-	UserIDCtx           = "userID"
-	UserRoleIDCtx       = "roleID"
-)
-
 func CheckUserAuthentication(c *gin.Context) {
 	header := c.GetHeader(authorizationHeader)
 

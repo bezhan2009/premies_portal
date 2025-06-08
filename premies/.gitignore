@@ -1,7 +1,0 @@
-# Some trash files
-.idea
-logs
-*.exe
-
-# Security Files
-.env

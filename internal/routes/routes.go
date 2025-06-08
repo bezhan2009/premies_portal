@@ -45,12 +45,7 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 		pingRoute.GET("/", controllers.Ping)
 	}
 
-	//depositRoute := r.Group("/deposit")
-	//{
-	//	depositRoute.GET("/portal", webSockets.WebSocketHandler)
-	//	depositRoute.POST("", controllers.DesignDeposit)
-	//}
-
+	// user & users Маршруты для сущности пользователей
 	r.GET("/user", middlewares.CheckUserAuthentication,
 		controllers.GetMyDataUser)
 
@@ -58,6 +53,16 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	{
 		usersRoute.GET("", controllers.GetAllUsers)
 		usersRoute.GET("/:id", controllers.GetUserByID)
+	}
+
+	// worker & workers маршруты для сущности
+	r.GET("/worker", middlewares.CheckUserAuthentication,
+		controllers.GetMyDataWorker)
+
+	workerRoute := r.Group("/workers", middlewares.CheckUserAuthentication, middlewares.CheckUserNotWorker)
+	{
+		workerRoute.GET("", controllers.GetAllWorkers)
+		workerRoute.GET("/:id", controllers.GetWorkerByID)
 	}
 
 	// auth Маршруты для авторизаций
