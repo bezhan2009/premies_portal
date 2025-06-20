@@ -9,4 +9,5 @@ var (
 	ErrPhoneUniquenessFailed         = errors.New("ErrPhoneUniquenessFailed")
 	ErrKnowledgeBaseUniquenessFailed = errors.New("ErrKnowledgeBaseUniquenessFailed")
 	ErrKnowledgeAlreadyExists        = errors.New("ErrKnowledgeAlreadyExists")
+	ErrOfficeNameUniquenessFailed    = errors.New("ErrOfficeNameUniquenessFailed")
 )

@@ -5,17 +5,17 @@ import "gorm.io/gorm"
 type Office struct {
 	gorm.Model
 
-	Title       string `gorm:"type:varchar(255)"`
-	Description string `gorm:"type:text"`
-	Director    *User  `gorm:"foreignKey:DirectorID"` // Связь с директором
-	DirectorID  *int   // внешний ключ на User
+	Title       string `json:"title" gorm:"type:varchar(255);unique"`
+	Description string `json:"description" gorm:"type:text"`
+	DirectorID  *int   `json:"director_id"`
+	Director    *User  `json:"-" gorm:"foreignKey:DirectorID"`
 }
 
 type OfficeUser struct {
 	gorm.Model
 
-	OfficeID int
-	Office   Office `gorm:"foreignkey:OfficeID"`
-	WorkerID int
-	Worker   Worker `gorm:"foreignkey:WorkerID"`
+	OfficeID int    `json:"office_id"`
+	Office   Office `json:"-" gorm:"foreignkey:OfficeID"`
+	WorkerID int    `json:"worker_id"`
+	Worker   Worker `json:"-" gorm:"foreignkey:WorkerID"`
 }

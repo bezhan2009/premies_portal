@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"errors"
+	"fmt"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/pkg/db"
+	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
 )
 
@@ -46,6 +49,16 @@ func GetOfficeById(id int) (office models.Office, err error) {
 	return office, nil
 }
 
+func GetOfficeByTitle(title string) (office models.Office, err error) {
+	if err = db.GetDBConn().Model(&models.Office{}).Where("title = ?", title).First(&office).Error; err != nil {
+		logger.Error.Printf("[repositoroty.GetOfficeByTitle] Error while getting office: %v", err)
+
+		return office, TranslateGormError(err)
+	}
+
+	return office, nil
+}
+
 func CreateOffice(office models.Office) (err error) {
 	if err = db.GetDBConn().Model(&models.Office{}).Create(&office).Error; err != nil {
 		logger.Error.Printf("[repositoroty.CreateOffice] Error while creating office: %v", err)
@@ -57,6 +70,7 @@ func CreateOffice(office models.Office) (err error) {
 }
 
 func UpdateOffice(office models.Office) (err error) {
+	fmt.Println(office)
 	if err = db.GetDBConn().Model(&models.Office{}).Where("id = ?", office.ID).Updates(office).Error; err != nil {
 		logger.Error.Printf("[repositoroty.UpdateOffice] Error while updating office: %v", err)
 
@@ -69,6 +83,10 @@ func UpdateOffice(office models.Office) (err error) {
 func DeleteOffice(officeID uint) (err error) {
 	office, err := GetOfficeById(int(officeID))
 	if err != nil {
+		if errors.Is(errs.ErrRecordNotFound, err) {
+			return errs.ErrOfficeNotFound
+		}
+
 		return err
 	}
 

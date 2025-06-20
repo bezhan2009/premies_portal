@@ -14,7 +14,7 @@ func ValidateOffice(office models.Office) (err error) {
 		return errs.ErrInvalidDescription
 	}
 
-	if *office.DirectorID == emptyInt {
+	if office.DirectorID == nil {
 		return errs.ErrDirectorIDIsEmpty
 	}
 

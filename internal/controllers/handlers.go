@@ -17,13 +17,16 @@ func handleBadRequestErrors(err error) bool {
 		errors.Is(err, errs.ErrInvalidPhoneNumber) ||
 		errors.Is(err, errs.ErrEmailUniquenessFailed) ||
 		errors.Is(err, errs.ErrPhoneUniquenessFailed) ||
+		errors.Is(err, errs.ErrAlreadyInOfficeWorkers) ||
 		errors.Is(err, errs.ErrKnowledgeAlreadyExists) ||
 		errors.Is(err, errs.ErrKnowledgeBaseUniquenessFailed) ||
 		errors.Is(err, errs.ErrYouAreNotWorker) ||
+		errors.Is(err, errs.ErrOfficeNameUniquenessFailed) ||
 		errors.Is(err, errs.ErrYouAreWorker) ||
 		errors.Is(err, errs.ErrWrongRoleID) ||
 		errors.Is(err, errs.ErrInvalidBaseID) ||
 		errors.Is(err, errs.ErrInvalidAfterID) ||
+		errors.Is(err, errs.ErrUserIsNotDirector) ||
 		errors.Is(err, errs.ErrInvalidMonth) ||
 		errors.Is(err, errs.ErrInvalidYear) ||
 		errors.Is(err, errs.ErrFirstNameIsRequired) ||
@@ -53,6 +56,7 @@ func handleNotFoundErrors(err error) bool {
 	return errors.Is(err, errs.ErrRecordNotFound) ||
 		errors.Is(err, errs.ErrUserNotFound) ||
 		errors.Is(err, errs.ErrFileNotFound) ||
+		errors.Is(err, errs.ErrOfficeNotFound) ||
 		errors.Is(err, errs.ErrTempReportNotFound) ||
 		errors.Is(err, errs.ErrKnowledgeBaseNotFound)
 }

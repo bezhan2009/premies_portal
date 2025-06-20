@@ -4,6 +4,7 @@ import (
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/repository"
+	"premiesPortal/pkg/errs"
 )
 
 func GetAllOfficeUsers(officeID uint) (officeUsers []models.OfficeUser, err error) {
@@ -27,6 +28,11 @@ func GetOfficeUserById(officeUserId uint) (officeUser models.OfficeUser, err err
 func AddUserToOffice(officeUser models.OfficeUser) (err error) {
 	if err = validators.ValidateOfficeUser(officeUser); err != nil {
 		return err
+	}
+
+	_, err = repository.GetOfficeWorkerByUserIDAndOfficeID(uint(officeUser.OfficeID), uint(officeUser.WorkerID))
+	if err == nil {
+		return errs.ErrAlreadyInOfficeWorkers
 	}
 
 	err = repository.AddUserToOffice(officeUser)

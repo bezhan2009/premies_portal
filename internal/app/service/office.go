@@ -4,6 +4,7 @@ import (
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/repository"
+	"premiesPortal/pkg/errs"
 )
 
 func GetAllOffices() (offices []models.Office, err error) {
@@ -29,6 +30,20 @@ func CreateOffice(office models.Office) (err error) {
 		return err
 	}
 
+	director, err := repository.GetUserByID(uint(*office.DirectorID))
+	if err != nil {
+		return err
+	}
+
+	if director.RoleID != 5 {
+		return errs.ErrUserIsNotDirector
+	}
+
+	_, err = repository.GetOfficeByTitle(office.Title)
+	if err == nil {
+		return errs.ErrOfficeNameUniquenessFailed
+	}
+
 	err = repository.CreateOffice(office)
 	if err != nil {
 		return err
@@ -38,8 +53,23 @@ func CreateOffice(office models.Office) (err error) {
 }
 
 func UpdateOffice(office models.Office) (err error) {
-	if err = validators.ValidateOffice(office); err != nil {
+	director, err := repository.GetUserByID(uint(*office.DirectorID))
+	if err != nil {
 		return err
+	}
+
+	if director.RoleID != 5 {
+		return errs.ErrUserIsNotDirector
+	}
+
+	_, err = repository.GetOfficeById(int(office.ID))
+	if err != nil {
+		return errs.ErrOfficeNotFound
+	}
+
+	_, err = repository.GetOfficeByTitle(office.Title)
+	if err == nil {
+		return errs.ErrOfficeNameUniquenessFailed
 	}
 
 	err = repository.UpdateOffice(office)

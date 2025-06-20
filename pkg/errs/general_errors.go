@@ -9,6 +9,7 @@ var (
 	ErrUserNotFound          = errors.New("ErrUserNotFound")
 	ErrDeleteFailed          = errors.New("ErrDeleteFailed")
 	ErrKnowledgeBaseNotFound = errors.New("ErrKnowledgeBaseNotFound")
+	ErrOfficeNotFound        = errors.New("ErrOfficeNotFound")
 	ErrKnowledgeDocNotFound  = errors.New("ErrKnowledgeDocNotFound")
 	ErrInvalidFilePath       = errors.New("ErrInvalidFilePath")
 	ErrFileNotFound          = errors.New("ErrFileNotFound")

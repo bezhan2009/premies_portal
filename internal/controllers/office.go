@@ -55,13 +55,22 @@ func CreateOffice(c *gin.Context) {
 }
 
 func UpdateOffice(c *gin.Context) {
+	officeIDStr := c.Param("id")
+	officeID, err := strconv.Atoi(officeIDStr)
+	if err != nil {
+		HandleError(c, errs.ErrInvalidID)
+		return
+	}
+
 	var office models.Office
 	if err := c.ShouldBindJSON(&office); err != nil {
 		HandleError(c, errs.ErrValidationFailed)
 		return
 	}
 
-	err := service.UpdateOffice(office)
+	office.ID = uint(officeID)
+
+	err = service.UpdateOffice(office)
 	if err != nil {
 		HandleError(c, err)
 		return

@@ -25,4 +25,6 @@ var (
 	ErrInvalidAfterID              = errors.New("ErrInvalidAfterID")
 	ErrInvalidMonth                = errors.New("ErrInvalidMonth")
 	ErrInvalidYear                 = errors.New("ErrInvalidYear")
+	ErrUserIsNotDirector           = errors.New("ErrUserIsNotDirector")
+	ErrAlreadyInOfficeWorkers      = errors.New("ErrAlreadyInOfficeWorkers")
 )

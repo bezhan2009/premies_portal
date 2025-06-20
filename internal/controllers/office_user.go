@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func GetAllOfficeUsers(c *gin.Context) {
+func GetAllOfficeWorkers(c *gin.Context) {
 	officeIDStr := c.Param("id")
 	officeID, err := strconv.Atoi(officeIDStr)
 	if err != nil {
@@ -26,7 +26,7 @@ func GetAllOfficeUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, officeUsers)
 }
 
-func GetOfficeUserByID(c *gin.Context) {
+func GetOfficeWorkerByID(c *gin.Context) {
 	officeUserIDStr := c.Param("id")
 	officeUserID, err := strconv.Atoi(officeUserIDStr)
 	if err != nil {
@@ -43,7 +43,7 @@ func GetOfficeUserByID(c *gin.Context) {
 	c.JSON(http.StatusOK, officeUser)
 }
 
-func AddUserToOffice(c *gin.Context) {
+func AddWorkerToOffice(c *gin.Context) {
 	var officeUser models.OfficeUser
 	if err := c.ShouldBindJSON(&officeUser); err != nil {
 		HandleError(c, errs.ErrValidationFailed)

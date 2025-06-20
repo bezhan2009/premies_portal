@@ -78,24 +78,24 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	}
 
 	// office Маршруты для офисов
-	office := r.Group("/office", middlewares.CheckUserAuthentication)
+	office := r.Group("/office", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
 	{
 		office.GET("", controllers.GetAllOffices)
 		office.GET("/:id", controllers.GetOfficeByID)
 
-		office.POST("", middlewares.CheckUserOperator, controllers.CreateOffice)
-		office.PATCH("/:id", middlewares.CheckUserOperator, controllers.UpdateOffice)
-		office.DELETE("/:id", middlewares.CheckUserOperator, controllers.DeleteOffice)
+		office.POST("", controllers.CreateOffice)
+		office.PATCH("/:id", controllers.UpdateOffice)
+		office.DELETE("/:id", controllers.DeleteOffice)
 	}
 
-	// officeUsers Маршруты для рабочих офисов
-	officeUsers := office.Group("/users")
+	// officeWorkers Маршруты для рабочих офисов
+	officeWorkers := office.Group("/workers")
 	{
-		officeUsers.GET("/:id", controllers.GetAllOfficeUsers)
-		officeUsers.GET("single/:id", controllers.GetOfficeUserByID)
+		officeWorkers.GET("/:id", controllers.GetAllOfficeWorkers)
+		officeWorkers.GET("single/:id", controllers.GetOfficeWorkerByID)
 
-		officeUsers.POST("", middlewares.CheckUserOperator, controllers.AddUserToOffice)
-		officeUsers.DELETE("", middlewares.CheckUserOperator, controllers.DeleteUserFromOffice)
+		officeWorkers.POST("", controllers.AddWorkerToOffice)
+		officeWorkers.DELETE("/:id", controllers.DeleteUserFromOffice)
 
 	}
 
@@ -139,9 +139,9 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	}
 
 	// cards Маршруты для карт
-	cards := r.Group("cards", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
+	cards := r.Group("/cards", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
 
-	cardSales := cards.Group("sales")
+	cardSales := cards.Group("/sales")
 	{
 		cardSales.POST("", controllers.AddCardSales)
 		cardSales.PATCH("/:id", controllers.UpdateCardSales)
