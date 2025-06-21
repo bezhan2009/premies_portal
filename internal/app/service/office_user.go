@@ -25,8 +25,8 @@ func GetOfficeUserById(officeUserId uint) (officeUser models.OfficeUser, err err
 	return officeUser, nil
 }
 
-func AddUserToOffice(officeUser models.OfficeUser) (err error) {
-	if err = validators.ValidateOfficeUser(officeUser); err != nil {
+func AddUserToOffice(officeUser *models.OfficeUser) (err error) {
+	if err = validators.ValidateOfficeUser(*officeUser); err != nil {
 		return err
 	}
 

@@ -96,7 +96,6 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 
 		officeWorkers.POST("", controllers.AddWorkerToOffice)
 		officeWorkers.DELETE("/:id", controllers.DeleteUserFromOffice)
-
 	}
 
 	// knowledge маршруты для базы знаний

@@ -7,9 +7,13 @@ import (
 )
 
 func GetAllOfficeUsers(officeID uint) (officeUsers []models.OfficeUser, err error) {
-	if err = db.GetDBConn().Model(&models.OfficeUser{}).Where("id = ?", officeID).Find(&officeUsers).Error; err != nil {
+	if err = db.GetDBConn().
+		Model(&models.OfficeUser{}).
+		Where("office_id = ?", officeID).
+		Preload("Worker").
+		Preload("Worker.User").
+		Find(&officeUsers).Error; err != nil {
 		logger.Error.Printf("[repository.GetAllOfficeUsers] Error while getting all office users: %v\n", err)
-
 		return officeUsers, TranslateGormError(err)
 	}
 
@@ -17,7 +21,12 @@ func GetAllOfficeUsers(officeID uint) (officeUsers []models.OfficeUser, err erro
 }
 
 func GetOfficeUserByID(officeUserID uint) (officeUser models.OfficeUser, err error) {
-	if err = db.GetDBConn().Model(&models.OfficeUser{}).Where("id = ?", officeUserID).First(&officeUser).Error; err != nil {
+	if err = db.GetDBConn().
+		Model(&models.OfficeUser{}).
+		Where("id = ?", officeUserID).
+		Preload("Worker").
+		Preload("Worker.User").
+		First(&officeUser).Error; err != nil {
 		logger.Error.Printf("[repository.GetOfficeUserByID] Error while getting office user: %v\n", err)
 
 		return officeUser, TranslateGormError(err)
@@ -27,8 +36,12 @@ func GetOfficeUserByID(officeUserID uint) (officeUser models.OfficeUser, err err
 }
 
 func GetOfficeWorkerByUserIDAndOfficeID(officeID, workerID uint) (officeUser models.OfficeUser, err error) {
-	if err = db.GetDBConn().Model(&models.OfficeUser{}).Where("office_id = ? AND worker_id = ?", officeID, workerID).First(&officeUser).Error; err != nil {
-		logger.Error.Printf("[repository.GetOfficeUserByID] Error while getting office user: %v\n", err)
+	if err = db.GetDBConn().
+		Model(&models.OfficeUser{}).
+		Where("office_id = ? AND worker_id = ?", officeID, workerID).
+		Preload("Worker").
+		First(&officeUser).Error; err != nil {
+		logger.Error.Printf("[repository.GetOfficeWorkerByUserIDAndOfficeID] Error while getting office user: %v\n", err)
 
 		return officeUser, TranslateGormError(err)
 	}
@@ -36,8 +49,8 @@ func GetOfficeWorkerByUserIDAndOfficeID(officeID, workerID uint) (officeUser mod
 	return officeUser, nil
 }
 
-func AddUserToOffice(officeUser models.OfficeUser) (err error) {
-	if err = db.GetDBConn().Model(&models.OfficeUser{}).Create(&officeUser).Error; err != nil {
+func AddUserToOffice(officeUser *models.OfficeUser) (err error) {
+	if err = db.GetDBConn().Model(&models.OfficeUser{}).Create(officeUser).Error; err != nil {
 		logger.Error.Printf("[repository.AddUserToOffice] Error while adding user to office: %v\n", err)
 
 		return TranslateGormError(err)

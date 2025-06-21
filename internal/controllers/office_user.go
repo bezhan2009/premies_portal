@@ -50,7 +50,7 @@ func AddWorkerToOffice(c *gin.Context) {
 		return
 	}
 
-	err := service.AddUserToOffice(officeUser)
+	err := service.AddUserToOffice(&officeUser)
 	if err != nil {
 		HandleError(c, err)
 		return

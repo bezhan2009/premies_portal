@@ -13,6 +13,8 @@ func GetAllWorkersPag(afterID, month, year uint) (workers []models.Worker, err e
 		Preload("CardTurnovers", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
 		Preload("CardSales", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
 		Preload("ServiceQuality", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
+		Preload("MobileBank", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
+		Preload("User").
 		Where("id > ?", afterID).
 		Order("id ASC").
 		Limit(security.AppSettings.AppLogicParams.PaginationParams.Limit).
@@ -30,6 +32,7 @@ func GetWorkerByID(month, year, workerID uint) (worker models.Worker, err error)
 		Preload("CardTurnovers", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
 		Preload("CardSales", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
 		Preload("ServiceQuality", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
+		Preload("MobileBank", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
 		Preload("User").
 		Where("id = ? OR user_id = ?", workerID, workerID).
 		First(&worker).Error

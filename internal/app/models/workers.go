@@ -12,9 +12,10 @@ type Worker struct {
 	PlaceWork     string  `json:"place_work"`
 
 	UserID uint `json:"user_id" gorm:"default:0"`
-	User   User `json:"-"`
+	User   User `json:"user"`
 
-	CardTurnovers  []CardTurnovers  `gorm:"foreignKey:WorkerID"`
-	CardSales      []CardSales      `gorm:"foreignKey:WorkerID"`
-	ServiceQuality []ServiceQuality `gorm:"foreignKey:WorkerID"`
+	MobileBank     []MobileBankSales `gorm:"foreignKey:WorkerID"`
+	CardTurnovers  []CardTurnovers   `gorm:"foreignKey:WorkerID"`
+	CardSales      []CardSales       `gorm:"foreignKey:WorkerID"`
+	ServiceQuality []ServiceQuality  `gorm:"foreignKey:WorkerID"`
 }

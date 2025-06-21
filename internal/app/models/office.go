@@ -17,5 +17,5 @@ type OfficeUser struct {
 	OfficeID int    `json:"office_id"`
 	Office   Office `json:"-" gorm:"foreignkey:OfficeID"`
 	WorkerID int    `json:"worker_id"`
-	Worker   Worker `json:"-" gorm:"foreignkey:WorkerID"`
+	Worker   Worker `json:"worker" gorm:"foreignkey:WorkerID"`
 }
