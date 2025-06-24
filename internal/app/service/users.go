@@ -6,8 +6,8 @@ import (
 	"premiesPortal/pkg/errs"
 )
 
-func GetAllWorkers(afterID, month, year uint) (users []models.Worker, err error) {
-	users, err = repository.GetAllWorkersPag(afterID, month, year)
+func GetAllWorkers(afterID, month, year uint, options models.WorkerPreloadOptions) (users []models.Worker, err error) {
+	users, err = repository.GetAllWorkersPag(afterID, month, year, options)
 	if err != nil {
 		return nil, err
 	}
@@ -24,12 +24,12 @@ func GetAllUsers(afterID uint) (users []models.User, err error) {
 	return users, nil
 }
 
-func GetWorkerByID(workerID, roleID, month, year uint) (worker models.Worker, err error) {
+func GetWorkerByID(workerID, roleID, month, year uint, options models.WorkerPreloadOptions) (worker models.Worker, err error) {
 	if roleID != 2 && roleID != 6 && roleID != 8 {
 		return worker, errs.ErrYouAreNotWorker
 	}
 
-	worker, err = repository.GetWorkerByID(month, year, workerID)
+	worker, err = repository.GetWorkerByID(month, year, workerID, options)
 	if err != nil {
 		return worker, err
 	}

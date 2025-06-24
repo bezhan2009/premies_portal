@@ -3,9 +3,11 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service"
 	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/controllers/middlewares"
+	"premiesPortal/pkg/db"
 	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
 	"strconv"
@@ -35,11 +37,25 @@ func GetAllWorkers(c *gin.Context) {
 		return
 	}
 
-	workers, err := service.GetAllWorkers(uint(afterID), uint(month), uint(year))
+	cacheKey := GenerateAllWorkersRedisKey(c, "workers_cache")
+
+	var workers []models.Worker
+
+	found, _ := db.GetCache(cacheKey, &workers)
+	if found {
+		c.JSON(http.StatusOK, workers)
+		return
+	}
+
+	preloadOptions := parsePreloadQueryParams(c)
+
+	workers, err = service.GetAllWorkers(uint(afterID), uint(month), uint(year), preloadOptions)
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
+
+	_ = db.SetCache(cacheKey, workers)
 
 	c.JSON(http.StatusOK, gin.H{
 		"workers": workers,
@@ -51,17 +67,6 @@ func GetWorkerByID(c *gin.Context) {
 	if err != nil {
 		logger.Error.Printf("[controllers.GetWorkerByID] invalid user_id path parameter: %s\n", c.Param("id"))
 		HandleError(c, errs.ErrInvalidID)
-		return
-	}
-
-	monthStr := c.Query("month")
-	if monthStr == "" {
-		monthStr = "0"
-	}
-
-	month, err := strconv.Atoi(monthStr)
-	if err != nil {
-		HandleError(c, errs.ErrInvalidMonth)
 		return
 	}
 
@@ -77,17 +82,31 @@ func GetWorkerByID(c *gin.Context) {
 		return
 	}
 
+	cacheKey := GenerateRedisKeyFromQuery(c, "worker_cache")
+
+	var worker models.Worker
+
+	found, _ := db.GetCache(cacheKey, &worker)
+	if found {
+		c.JSON(http.StatusOK, worker)
+		return
+	}
+
+	preloadOptions := parsePreloadQueryParams(c)
+
 	roleID, err := service.GetRoleByUserID(uint(workerID))
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
 
-	worker, err := service.GetWorkerByID(uint(workerID), roleID, uint(month), uint(year))
+	worker, err = service.GetWorkerByID(uint(workerID), roleID, uint(month), uint(year), preloadOptions)
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
+
+	_ = db.SetCache(cacheKey, worker)
 
 	c.JSON(http.StatusOK, worker)
 }
@@ -105,10 +124,12 @@ func GetMyDataWorker(c *gin.Context) {
 		return
 	}
 
+	preloadOptions := parsePreloadQueryParams(c)
+
 	workerID := c.GetUint(middlewares.UserIDCtx)
 	roleID := c.GetUint(middlewares.UserRoleIDCtx)
 
-	worker, err := service.GetWorkerByID(workerID, roleID, uint(month), uint(year))
+	worker, err := service.GetWorkerByID(workerID, roleID, uint(month), uint(year), preloadOptions)
 	if err != nil {
 		HandleError(c, err)
 		return

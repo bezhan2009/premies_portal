@@ -18,4 +18,5 @@ type Worker struct {
 	CardTurnovers  []CardTurnovers   `gorm:"foreignKey:WorkerID"`
 	CardSales      []CardSales       `gorm:"foreignKey:WorkerID"`
 	ServiceQuality []ServiceQuality  `gorm:"foreignKey:WorkerID"`
+	CardDetails    []CardDetails     `gorm:"foreignKey:WorkerID"`
 }

@@ -7,14 +7,29 @@ import (
 	"premiesPortal/pkg/logger"
 )
 
-func GetAllWorkersPag(afterID, month, year uint) (workers []models.Worker, err error) {
-	err = db.GetDBConn().
-		Model(&models.Worker{}).
-		Preload("CardTurnovers", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
-		Preload("CardSales", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
-		Preload("ServiceQuality", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
-		Preload("MobileBank", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
-		Preload("User").
+func GetAllWorkersPag(afterID, month, year uint, opts models.WorkerPreloadOptions) (workers []models.Worker, err error) {
+	query := db.GetDBConn().Model(&models.Worker{})
+
+	if opts.LoadCardTurnovers {
+		query = query.Preload("CardTurnovers", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	}
+	if opts.LoadCardSales {
+		query = query.Preload("CardSales", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	}
+	if opts.LoadServiceQuality {
+		query = query.Preload("ServiceQuality", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	}
+	if opts.LoadMobileBank {
+		query = query.Preload("MobileBank", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	}
+	if opts.LoadCardDetails {
+		query = query.Preload("CardDetails", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	}
+	if opts.LoadUser {
+		query = query.Preload("User")
+	}
+
+	err = query.
 		Where("id > ?", afterID).
 		Order("id ASC").
 		Limit(security.AppSettings.AppLogicParams.PaginationParams.Limit).
@@ -27,16 +42,29 @@ func GetAllWorkersPag(afterID, month, year uint) (workers []models.Worker, err e
 	return workers, nil
 }
 
-func GetWorkerByID(month, year, workerID uint) (worker models.Worker, err error) {
-	err = db.GetDBConn().
-		Preload("CardTurnovers", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
-		Preload("CardSales", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
-		Preload("ServiceQuality", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
-		Preload("MobileBank", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
-		Preload("User").
-		Where("id = ? OR user_id = ?", workerID, workerID).
-		First(&worker).Error
+func GetWorkerByID(month, year, workerID uint, opts models.WorkerPreloadOptions) (worker models.Worker, err error) {
+	query := db.GetDBConn().Model(&models.Worker{})
 
+	if opts.LoadCardTurnovers {
+		query = query.Preload("CardTurnovers", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	}
+	if opts.LoadCardSales {
+		query = query.Preload("CardSales", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	}
+	if opts.LoadServiceQuality {
+		query = query.Preload("ServiceQuality", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	}
+	if opts.LoadMobileBank {
+		query = query.Preload("MobileBank", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	}
+	if opts.LoadCardDetails {
+		query = query.Preload("CardDetails", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	}
+	if opts.LoadUser {
+		query = query.Preload("User")
+	}
+
+	err = query.Where("id = ? OR user_id = ?", workerID, workerID).First(&worker).Error
 	if err != nil {
 		logger.Error.Printf("[repository.GetWorkerByID] error getting worker by id: %v\n", err)
 		return worker, TranslateGormError(err)

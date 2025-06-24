@@ -57,6 +57,11 @@ func main() {
 		panic(err)
 	}
 
+	err = db.InitializeRedis(security.AppSettings.RedisParams)
+	if err != nil {
+		panic(err)
+	}
+
 	err = server.ServiceStart()
 	if err != nil {
 		panic(err)

@@ -36,6 +36,7 @@ func Migrate() error {
 		&models2.Office{},
 		&models2.OfficeUser{},
 		&models2.CardSales{},
+		&models2.CardDetails{},
 		&models2.MobileBankSales{},
 		&models2.CardTurnovers{},
 		&models2.ServiceQuality{},
