@@ -72,3 +72,14 @@ func GetWorkerByID(month, year, workerID uint, opts models.WorkerPreloadOptions)
 
 	return worker, nil
 }
+
+func GetWorkerByUserID(workerID uint) (worker models.Worker, err error) {
+	err = db.GetDBConn().Model(&models.Worker{}).Where("id = ? OR user_id = ?", workerID, workerID).First(&worker).Error
+	if err != nil {
+		logger.Error.Printf("[repository.GetWorkerByID] error getting worker by id: %v\n", err)
+
+		return worker, TranslateGormError(err)
+	}
+
+	return worker, nil
+}

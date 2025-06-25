@@ -18,6 +18,6 @@ type CardDetails struct {
 	OutBalance float64   `json:"out_balance" gorm:"type:numeric"`
 	Coast      float64   `json:"coast" gorm:"type:numeric"`
 
-	WorkerID uint   `gorm:"not null"`
-	Worker   Worker `json:"-" gorm:"foreignkey:WorkerID"`
+	WorkerID uint   `json:"worker_id" gorm:"not null"`
+	Worker   Worker `json:"worker" gorm:"foreignkey:WorkerID"`
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"premiesPortal/internal/app/models"
@@ -43,7 +44,9 @@ func GetAllWorkers(c *gin.Context) {
 
 	found, _ := db.GetCache(cacheKey, &workers)
 	if found {
-		c.JSON(http.StatusOK, workers)
+		c.JSON(http.StatusOK, gin.H{
+			"workers": workers,
+		})
 		return
 	}
 
@@ -88,7 +91,7 @@ func GetWorkerByID(c *gin.Context) {
 
 	found, _ := db.GetCache(cacheKey, &worker)
 	if found {
-		c.JSON(http.StatusOK, worker)
+		c.JSON(http.StatusOK, gin.H{"worker": worker})
 		return
 	}
 
@@ -108,7 +111,7 @@ func GetWorkerByID(c *gin.Context) {
 
 	_ = db.SetCache(cacheKey, worker)
 
-	c.JSON(http.StatusOK, worker)
+	c.JSON(http.StatusOK, gin.H{"worker": worker})
 }
 
 func GetMyDataWorker(c *gin.Context) {
@@ -129,11 +132,23 @@ func GetMyDataWorker(c *gin.Context) {
 	workerID := c.GetUint(middlewares.UserIDCtx)
 	roleID := c.GetUint(middlewares.UserRoleIDCtx)
 
+	cacheKey := GenerateRedisKeyFromQuery(c, fmt.Sprintf("worker_cache:%d", workerID))
+
+	var worker models.Worker
+
+	found, _ := db.GetCache(cacheKey, &worker)
+	if found {
+		c.JSON(http.StatusOK, gin.H{"worker": worker})
+		return
+	}
+
 	worker, err := service.GetWorkerByID(workerID, roleID, uint(month), uint(year), preloadOptions)
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
+
+	_ = db.SetCache(cacheKey, worker)
 
 	c.JSON(http.StatusOK, worker)
 }

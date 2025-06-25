@@ -58,11 +58,19 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	// worker & workers маршруты для сущности
 	r.GET("/worker", middlewares.CheckUserAuthentication,
 		controllers.GetMyDataWorker)
+	r.GET("/worker/card-details", middlewares.CheckUserAuthentication,
+		controllers.GetMyCardDetailsWorker)
 
 	workerRoute := r.Group("/workers", middlewares.CheckUserAuthentication, middlewares.CheckUserNotWorker)
 	{
 		workerRoute.GET("", controllers.GetAllWorkers)
 		workerRoute.GET("/:id", controllers.GetWorkerByID)
+	}
+
+	workersCardDetails := workerRoute.Group("card-details", middlewares.CheckUserAuthentication, middlewares.CheckUserNotWorker)
+	{
+		workersCardDetails.GET("", controllers.GetCardDetailsWorkers)
+		workersCardDetails.GET("/:id", controllers.GetCardDetailsWorkerByID)
 	}
 
 	// auth Маршруты для авторизаций
