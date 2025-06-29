@@ -60,6 +60,8 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 		controllers.GetMyDataWorker)
 	r.GET("/worker/card-details", middlewares.CheckUserAuthentication,
 		controllers.GetMyCardDetailsWorker)
+	r.GET("/worker/mb-details", middlewares.CheckUserAuthentication,
+		controllers.GetAllWorkersMobileBankDetails)
 
 	workerRoute := r.Group("/workers", middlewares.CheckUserAuthentication, middlewares.CheckUserNotWorker)
 	{

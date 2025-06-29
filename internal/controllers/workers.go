@@ -138,7 +138,7 @@ func GetMyDataWorker(c *gin.Context) {
 
 	found, _ := db.GetCache(cacheKey, &worker)
 	if found {
-		c.JSON(http.StatusOK, gin.H{"worker": worker})
+		c.JSON(http.StatusOK, worker)
 		return
 	}
 

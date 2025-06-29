@@ -9,6 +9,8 @@ type Office struct {
 	Description string `json:"description" gorm:"type:text"`
 	DirectorID  *int   `json:"director_id"`
 	Director    *User  `json:"-" gorm:"foreignKey:DirectorID"`
+
+	OfficeUsers []OfficeUser `json:"office_user" gorm:"foreignkey:OfficeID"`
 }
 
 type OfficeUser struct {

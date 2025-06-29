@@ -10,7 +10,7 @@ import (
 )
 
 func GetAllOffices() (offices []models.Office, err error) {
-	if err = db.GetDBConn().Model(&models.Office{}).Find(&offices).Error; err != nil {
+	if err = db.GetDBConn().Model(&models.Office{}).Preload("OfficeUsers").Preload("OfficeUsers.Worker").Preload("OfficeUsers.Worker.User").Find(&offices).Error; err != nil {
 		logger.Error.Printf("[repositoroty.GetAllOffices] Error while getting all offices: %v", err)
 
 		return nil, TranslateGormError(err)
@@ -40,7 +40,7 @@ func GetOfficesAndUsersById(officeID int) (officeAndUsers models.OfficeAndUsers,
 }
 
 func GetOfficeById(id int) (office models.Office, err error) {
-	if err = db.GetDBConn().Model(&models.Office{}).Where("id = ?", id).First(&office).Error; err != nil {
+	if err = db.GetDBConn().Model(&models.Office{}).Where("id = ?", id).Preload("OfficeUsers").Preload("OfficeUsers.Worker").Preload("OfficeUsers.Worker.User").First(&office).Error; err != nil {
 		logger.Error.Printf("[repositoroty.GetOfficeById] Error while getting office: %v", err)
 
 		return office, TranslateGormError(err)

@@ -6,15 +6,15 @@ import (
 )
 
 func AddCardTurnover(turnover models.CardTurnovers) (id uint, err error) {
-	if err = db.GetDBConn().Model(&models.CardTurnovers{}).Create(turnover).Error; err != nil {
+	if err = db.GetDBConn().Model(&models.CardTurnovers{}).Create(&turnover).Error; err != nil {
 		return 0, TranslateGormError(err)
 	}
 
-	return id, nil
+	return turnover.ID, nil
 }
 
 func UpdateCardTurnover(turnovers models.CardTurnovers) (err error) {
-	if err = db.GetDBConn().Model(&models.CardTurnovers{}).Updates(turnovers).Error; err != nil {
+	if err = db.GetDBConn().Model(&models.CardTurnovers{}).Updates(&turnovers).Error; err != nil {
 		return TranslateGormError(err)
 	}
 
