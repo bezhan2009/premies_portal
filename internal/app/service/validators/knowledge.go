@@ -17,10 +17,6 @@ func ValidateKnowledge(knowledge models.Knowledge) (err error) {
 		return errs.ErrInvalidTitle
 	}
 
-	if knowledge.Description == "" {
-		return errs.ErrInvalidDescription
-	}
-
 	return nil
 }
 

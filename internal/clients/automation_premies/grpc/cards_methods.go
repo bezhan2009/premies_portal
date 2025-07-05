@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
-	"premiesPortal/internal/app/grpc/gen/go/cards"
+	"premiesPortal/internal/app/grpc/gen/cards"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
@@ -34,7 +34,7 @@ func (c *Client) UploadCards(ctx context.Context, in *cards.CardsUploadRequest) 
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	resp.Resp = respGrpc.Status
+	resp.Resp = respGrpc.GetStatus()
 
 	return &resp, nil
 }
@@ -60,7 +60,7 @@ func (c *Client) CleanCards(ctx context.Context, in *emptypb.Empty) (*models.Res
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	resp.Resp = respGrpc.Status
+	resp.Resp = respGrpc.GetStatus()
 
 	return &resp, nil
 }

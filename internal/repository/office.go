@@ -9,8 +9,14 @@ import (
 	"premiesPortal/pkg/logger"
 )
 
-func GetAllOffices() (offices []models.Office, err error) {
-	if err = db.GetDBConn().Model(&models.Office{}).Preload("OfficeUsers").Preload("OfficeUsers.Worker").Preload("OfficeUsers.Worker.User").Find(&offices).Error; err != nil {
+func GetAllOffices(month, year uint) (offices []models.Office, err error) {
+	if err = db.GetDBConn().Model(&models.Office{}).
+		Preload("OfficeUsers").
+		Preload("OfficeUsers.Worker").
+		Preload("OfficeUsers.Worker.CardSales", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
+		Preload("OfficeUsers.Worker.CardTurnovers", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
+		Preload("OfficeUsers.Worker.User").
+		Find(&offices).Error; err != nil {
 		logger.Error.Printf("[repositoroty.GetAllOffices] Error while getting all offices: %v", err)
 
 		return nil, TranslateGormError(err)
@@ -39,8 +45,24 @@ func GetOfficesAndUsersById(officeID int) (officeAndUsers models.OfficeAndUsers,
 	return officeAndUsers, nil
 }
 
-func GetOfficeById(id int) (office models.Office, err error) {
-	if err = db.GetDBConn().Model(&models.Office{}).Where("id = ?", id).Preload("OfficeUsers").Preload("OfficeUsers.Worker").Preload("OfficeUsers.Worker.User").First(&office).Error; err != nil {
+func GetOfficeById(month, year uint, id int) (office models.Office, err error) {
+	if err = db.GetDBConn().Model(&models.Office{}).Where("id = ?", id).
+		Preload("OfficeUsers").
+		Preload("OfficeUsers.Worker").
+		Preload("OfficeUsers.Worker.CardSales", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
+		Preload("OfficeUsers.Worker.CardTurnovers", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
+		Preload("OfficeUsers.Worker.User").First(&office).Error; err != nil {
+		logger.Error.Printf("[repositoroty.GetOfficeById] Error while getting office: %v", err)
+
+		return office, TranslateGormError(err)
+	}
+
+	return office, nil
+}
+
+func GetOfficeByIdOnlyOffice(id int) (office models.Office, err error) {
+	if err = db.GetDBConn().Model(&models.Office{}).Where("id = ?", id).
+		First(&office).Error; err != nil {
 		logger.Error.Printf("[repositoroty.GetOfficeById] Error while getting office: %v", err)
 
 		return office, TranslateGormError(err)
@@ -81,7 +103,7 @@ func UpdateOffice(office models.Office) (err error) {
 }
 
 func DeleteOffice(officeID uint) (err error) {
-	office, err := GetOfficeById(int(officeID))
+	office, err := GetOfficeByIdOnlyOffice(int(officeID))
 	if err != nil {
 		if errors.Is(errs.ErrRecordNotFound, err) {
 			return errs.ErrOfficeNotFound

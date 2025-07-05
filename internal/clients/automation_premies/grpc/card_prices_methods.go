@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"net/http"
-	"premiesPortal/internal/app/grpc/gen/go/card_prices"
+	"premiesPortal/internal/app/grpc/gen/card_prices"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
@@ -33,7 +33,7 @@ func (c *Client) UploadCardPricesData(ctx context.Context, in *card_prices.CardP
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	resp.Resp = respGrpc.Status
+	resp.Resp = respGrpc.GetStatus()
 
 	return &resp, nil
 }

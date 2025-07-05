@@ -39,6 +39,7 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.Static("/uploads", "./uploads")
 
 	pingRoute := r.Group("/ping")
 	{
@@ -172,34 +173,72 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 		serviceQuality.DELETE("/:id", controllers.DeleteServiceQuality)
 	}
 
+	r.GET("/worker/tests", middlewares.CheckUserAuthentication, controllers.GetTestsForWorker)
+
+	tests := r.Group("/tests", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
+	{
+		tests.GET("", controllers.GetAllTests)
+		tests.GET("/:id", controllers.GetTestById)
+		tests.POST("", controllers.CreateTest)
+		tests.PATCH("/:id", controllers.UpdateTest)
+		tests.DELETE("/:id", controllers.DeleteTest)
+	}
+
+	testQuestions := tests.Group("/questions")
+	{
+		testQuestions.POST("", controllers.CreateTestQuestions)
+		testQuestions.PATCH("/:id", controllers.UpdateTestQuestions)
+		testQuestions.DELETE("/:id", controllers.DeleteTestQuestions)
+	}
+
+	testOptions := tests.Group("/options")
+	{
+		testOptions.POST("", controllers.CreateTestOptions)
+		testOptions.PATCH("/:id", controllers.UpdateTestOptions)
+		testOptions.DELETE("/:id", controllers.DeleteTestOptions)
+	}
+
+	testAnswers := r.Group("tests/answers", middlewares.CheckUserAuthentication)
+	{
+		testAnswers.GET("", middlewares.CheckUserOperator, controllers.GetTestAnswers)
+		testAnswers.GET("/:id/single", controllers.GetTestAnswersByAnswerId)
+		testAnswers.GET("/:id", controllers.GetTestAnswersByTestId)
+		testAnswers.POST("", controllers.CreateTestAnswers)
+	}
+
 	automationRoutes := r.Group("automation", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
 
 	cardsAutomation := automationRoutes.Group("cards")
 	{
-		cardsAutomation.POST("", automation.UploadCards)
+		cardsAutomation.POST("", automation.UploadAutomationFile, automation.UploadCards)
 		cardsAutomation.DELETE("", automation.CleanCards)
 	}
 
-	cardPricesAutomation := automationRoutes.Group("card-prices")
+	cardPricesAutomation := automationRoutes.Group("card-prices", automation.UploadAutomationFile)
 	{
 		cardPricesAutomation.POST("", automation.UploadCardPrices)
 	}
 
 	mobileBankAutomation := automationRoutes.Group("mobile-bank")
 	{
-		mobileBankAutomation.POST("", automation.UploadMobileBankData)
+		mobileBankAutomation.POST("", automation.UploadAutomationFile, automation.UploadMobileBankData)
 		mobileBankAutomation.DELETE("", automation.CleanMobileBankTable)
 	}
 
 	tusAutomation := automationRoutes.Group("call-center")
 	{
-		tusAutomation.POST("", automation.UploadTusData)
+		tusAutomation.POST("", automation.UploadAutomationFile, automation.UploadTusData)
 		tusAutomation.DELETE("", automation.CleanTusTable)
 	}
 
 	reportsAutomation := automationRoutes.Group("reports")
 	{
-		reportsAutomation.POST("", automation.CreateZIPReports)
+		reportsAutomation.GET("", automation.CreateZIPReports)
+	}
+
+	accountantAutomation := automationRoutes.Group("accountant")
+	{
+		accountantAutomation.GET("", automation.CreateXLSXAccountantReport)
 	}
 
 	return r

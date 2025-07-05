@@ -22,3 +22,9 @@ type WorkerPreloadOptions struct {
 	LoadCardDetails    bool
 	LoadUser           bool
 }
+
+type OptionUtil struct {
+	QuestionID uint   `json:"question_id"`
+	Text       string `json:"text"`
+	IsCorrect  bool   `json:"is_correct"`
+}

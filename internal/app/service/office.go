@@ -7,8 +7,8 @@ import (
 	"premiesPortal/pkg/errs"
 )
 
-func GetAllOffices() (offices []models.Office, err error) {
-	offices, err = repository.GetAllOffices()
+func GetAllOffices(month, year uint) (offices []models.Office, err error) {
+	offices, err = repository.GetAllOffices(month, year)
 	if err != nil {
 		return nil, err
 	}
@@ -16,8 +16,8 @@ func GetAllOffices() (offices []models.Office, err error) {
 	return offices, nil
 }
 
-func GetOfficeById(officeID int) (office models.OfficeAndUsers, err error) {
-	office, err = repository.GetOfficesAndUsersById(officeID)
+func GetOfficeById(month, year uint, officeID int) (office models.Office, err error) {
+	office, err = repository.GetOfficeById(month, year, officeID)
 	if err != nil {
 		return office, err
 	}
@@ -62,7 +62,7 @@ func UpdateOffice(office models.Office) (err error) {
 		return errs.ErrUserIsNotDirector
 	}
 
-	_, err = repository.GetOfficeById(int(office.ID))
+	_, err = repository.GetOfficeByIdOnlyOffice(int(office.ID))
 	if err != nil {
 		return errs.ErrOfficeNotFound
 	}

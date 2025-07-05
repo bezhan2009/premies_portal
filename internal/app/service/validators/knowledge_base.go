@@ -10,9 +10,5 @@ func ValidateKnowledgeBase(kb models.KnowledgeBase) (err error) {
 		return errs.ErrInvalidTitle
 	}
 
-	if kb.Description == "" {
-		return errs.ErrInvalidDescription
-	}
-
 	return nil
 }

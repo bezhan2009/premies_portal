@@ -3,11 +3,13 @@ package grpc
 import (
 	"context"
 	"fmt"
-	cardPricesServ "premiesPortal/internal/app/grpc/gen/go/card_prices"
-	cardsServ "premiesPortal/internal/app/grpc/gen/go/cards"
-	mobileBankServ "premiesPortal/internal/app/grpc/gen/go/mobile_bank"
-	reportServ "premiesPortal/internal/app/grpc/gen/go/reports"
-	tusServ "premiesPortal/internal/app/grpc/gen/go/tus"
+	accountantServ "premiesPortal/internal/app/grpc/gen/accountant"
+	cardPricesServ "premiesPortal/internal/app/grpc/gen/card_prices"
+	cardsServ "premiesPortal/internal/app/grpc/gen/cards"
+	mobileBankServ "premiesPortal/internal/app/grpc/gen/mobile_bank"
+	reportServ "premiesPortal/internal/app/grpc/gen/reports"
+	tusServ "premiesPortal/internal/app/grpc/gen/tus"
+	uplServ "premiesPortal/internal/app/grpc/gen/upload_file"
 	"premiesPortal/pkg/logger"
 
 	"google.golang.org/grpc/codes"
@@ -24,6 +26,8 @@ type Client struct {
 	TusApi        tusServ.TusServiceClient
 	CardPricesApi cardPricesServ.CardPricesServiceClient
 	ReportApi     reportServ.ReportsServiceClient
+	UploadFileApi uplServ.UploadFileServiceClient
+	AccountantApi accountantServ.AccountantsServiceClient
 }
 
 var client *Client
@@ -33,10 +37,8 @@ func New(ctx context.Context,
 	addr string,
 	timeout time.Duration,
 	retriesCount int,
-) error {
+) (err error) {
 	const op = "grpc.New"
-
-	var err error
 
 	retryOpts := []grpcretry.CallOption{
 		grpcretry.WithCodes(codes.NotFound, codes.Aborted, codes.DeadlineExceeded),
@@ -61,6 +63,8 @@ func New(ctx context.Context,
 		TusApi:        tusServ.NewTusServiceClient(conn),
 		CardPricesApi: cardPricesServ.NewCardPricesServiceClient(conn),
 		ReportApi:     reportServ.NewReportsServiceClient(conn),
+		UploadFileApi: uplServ.NewUploadFileServiceClient(conn),
+		AccountantApi: accountantServ.NewAccountantsServiceClient(conn),
 	}
 
 	return nil

@@ -37,7 +37,7 @@ func (c *Client) CreateZIPReports(ctx context.Context, in *emptypb.Empty) (*mode
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	resp.Resp = respGrpc.ZipPath
+	resp.Resp = respGrpc.GetZipPath()
 
 	return &resp, nil
 }

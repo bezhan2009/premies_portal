@@ -1,16 +1,30 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service"
+	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/pkg/errs"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetAllOffices(c *gin.Context) {
-	offices, err := service.GetAllOffices()
+	isValid, month := validators.ValidateMonth(c)
+	if !isValid {
+		HandleError(c, errs.ErrInvalidMonth)
+		return
+	}
+
+	isValid, year := validators.ValidateYear(c)
+	if !isValid {
+		HandleError(c, errs.ErrInvalidYear)
+		return
+	}
+
+	offices, err := service.GetAllOffices(uint(month), uint(year))
 	if err != nil {
 		HandleError(c, err)
 		return
@@ -27,7 +41,19 @@ func GetOfficeByID(c *gin.Context) {
 		return
 	}
 
-	office, err := service.GetOfficeById(officeID)
+	isValid, month := validators.ValidateMonth(c)
+	if !isValid {
+		HandleError(c, errs.ErrInvalidMonth)
+		return
+	}
+
+	isValid, year := validators.ValidateYear(c)
+	if !isValid {
+		HandleError(c, errs.ErrInvalidYear)
+		return
+	}
+
+	office, err := service.GetOfficeById(uint(month), uint(year), officeID)
 	if err != nil {
 		HandleError(c, err)
 		return

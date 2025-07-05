@@ -96,6 +96,11 @@ type PaginationParams struct {
 	Limit int `json:"limit"`
 }
 
+type TestsLogicParams struct {
+	ShowTests uint `json:"show_tests"`
+}
+
 type AppLogicParams struct {
 	PaginationParams PaginationParams `json:"pagination_params"`
+	TestsLogicParams TestsLogicParams `json:"tests_logic_params"`
 }

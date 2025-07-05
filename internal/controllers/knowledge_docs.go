@@ -1,13 +1,14 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service"
 	"premiesPortal/internal/controllers/middlewares"
 	"premiesPortal/pkg/errs"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetKnowledgeDocsByKnowledgeID(c *gin.Context) {
@@ -47,7 +48,7 @@ func GetKnowledgeDocsByID(c *gin.Context) {
 func CreateKnowledgeDoc(c *gin.Context) {
 	var knowledgeDoc models.KnowledgeDocs
 	knowledgeDoc.Title = c.GetString(middlewares.KnowledgeDocTitle)
-	knowledgeDoc.KnowledgeID = c.GetUint(middlewares.KnowledgeDocKnowledgeID)
+	knowledgeDoc.KnowledgeID = uint(c.GetInt(middlewares.KnowledgeDocKnowledgeID))
 	knowledgeDoc.FilePath = c.GetString(middlewares.UploadedFilePath)
 
 	err := service.CreateKnowledgeDocs(knowledgeDoc)

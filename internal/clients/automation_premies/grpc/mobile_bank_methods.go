@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
-	"premiesPortal/internal/app/grpc/gen/go/mobile_bank"
+	"premiesPortal/internal/app/grpc/gen/mobile_bank"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
@@ -34,7 +34,7 @@ func (c *Client) UploadMobileBankData(ctx context.Context, in *mobile_bank.Mobil
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	resp.Resp = respGrpc.Status
+	resp.Resp = respGrpc.GetStatus()
 
 	return &resp, nil
 }
@@ -60,7 +60,7 @@ func (c *Client) CleanMobileBankTable(ctx context.Context, in *emptypb.Empty) (*
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	resp.Resp = respGrpc.Status
+	resp.Resp = respGrpc.GetStatus()
 
 	return &resp, nil
 }

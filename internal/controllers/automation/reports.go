@@ -2,22 +2,68 @@ package automation
 
 import (
 	"context"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"net/http"
+	upl "premiesPortal/internal/app/grpc/gen/upload_file"
 	"premiesPortal/internal/clients/automation_premies/grpc"
-	"premiesPortal/internal/controllers"
+	"premiesPortal/pkg/errs"
 )
 
 func CreateZIPReports(c *gin.Context) {
 	clientAutomation := grpc.GetClient()
 
-	resp, err := clientAutomation.CreateZIPReports(context.Background(), &emptypb.Empty{})
+	// Шаг 1. Создаём ZIP-файл
+	createResp, err := clientAutomation.CreateZIPReports(context.Background(), &emptypb.Empty{})
 	if err != nil {
-		controllers.HandleError(c, err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": errs.ErrSomethingWentWrong.Error(),
+		})
 		return
 	}
 
-	c.JSON(resp.StatusCode, gin.H{
-		"message": resp.Resp,
-	})
+	// Шаг 2. Извлекаем путь к файлу
+	filePath, ok := createResp.Resp.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Invalid type in CreateZIPReports response",
+		})
+		return
+	}
+
+	// Шаг 3. Вызываем DownloadFile
+	req := &upl.DownloadFileRequest{
+		Path: filePath,
+	}
+
+	downloadResp, err := clientAutomation.DownloadFile(c.Request.Context(), req)
+	if err != nil {
+		switch {
+		case errors.Is(err, errs.ErrSomethingWentWrong):
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		case errors.Is(err, errs.ErrTempReportNotFound):
+			c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to download file"})
+		}
+		return
+	}
+
+	// Шаг 4. Приводим Resp к []byte
+	fileContent, ok := downloadResp.Resp.([]byte)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Invalid type in DownloadFile response",
+		})
+		return
+	}
+
+	// Шаг 5. Выдаём файл пользователю
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Transfer-Encoding", "binary")
+	c.Header("Content-Disposition", "attachment; filename=downloaded_file.zip")
+	c.Header("Content-Type", "application/octet-stream")
+
+	c.Data(http.StatusOK, "application/octet-stream", fileContent)
 }

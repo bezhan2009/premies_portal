@@ -4,28 +4,23 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"premiesPortal/internal/app/grpc/gen/go/cards"
-	"premiesPortal/internal/app/models"
+	"premiesPortal/internal/app/grpc/gen/cards"
 	"premiesPortal/internal/clients/automation_premies/grpc"
 	"premiesPortal/internal/controllers"
 	"premiesPortal/pkg/errs"
 )
 
 func UploadCards(c *gin.Context) {
-	var filePath models.FilePath
-	if err := c.ShouldBindJSON(&filePath); err != nil {
-		controllers.HandleError(c, errs.ErrValidationFailed)
-		return
-	}
+	filePath := c.GetString(UploadedAutomationFilePath)
 
-	if filePath.FilePath == "" {
+	if filePath == "" {
 		controllers.HandleError(c, errs.ErrInvalidFilePath)
 		return
 	}
 
 	client := grpc.GetClient()
 
-	resp, err := client.UploadCards(context.Background(), &cards.CardsUploadRequest{FilePath: filePath.FilePath})
+	resp, err := client.UploadCards(context.Background(), &cards.CardsUploadRequest{FilePath: filePath})
 	if err != nil {
 		controllers.HandleError(c, err)
 		return
