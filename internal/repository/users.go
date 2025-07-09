@@ -86,8 +86,8 @@ func UserExists(username, email, phone string) (bool, bool, bool, error) {
 	return usernameExists, emailExists, phoneExists, nil
 }
 
-func CreateUser(user models.User) (userDB models.User, err error) {
-	if err = db.GetDBConn().Create(&user).Error; err != nil {
+func CreateUser(tx *gorm.DB, user models.User) (userDB models.User, err error) {
+	if err = tx.Create(&user).Error; err != nil {
 		logger.Error.Printf("[repository.CreateUser] error creating user: %v\n", err)
 		return userDB, TranslateGormError(err)
 	}
@@ -152,4 +152,14 @@ func GetUserByEmail(email string) (user models.User, err error) {
 	}
 
 	return user, nil
+}
+
+func UpdateUser(user models.User) (err error) {
+	if err = db.GetDBConn().Model(models.User{}).Where("id = ?", user.ID).Updates(user).Error; err != nil {
+		logger.Error.Printf("[repository.UpdateUser] Error while updating user: %v", err)
+
+		return TranslateGormError(err)
+	}
+
+	return nil
 }

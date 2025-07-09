@@ -1,11 +1,22 @@
 package repository
 
 import (
+	"gorm.io/gorm"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/security"
 	"premiesPortal/pkg/db"
 	"premiesPortal/pkg/logger"
 )
+
+func CreateWorker(tx *gorm.DB, worker models.Worker) (workerID uint, err error) {
+	if err = tx.Create(&worker).Error; err != nil {
+		logger.Error.Printf("[repository.CreateWorker] Failed to create worker: %v", err)
+
+		return workerID, TranslateGormError(err)
+	}
+
+	return worker.ID, nil
+}
 
 func GetAllWorkersPag(afterID, month, year uint, opts models.WorkerPreloadOptions) (workers []models.Worker, err error) {
 	query := db.GetDBConn().Model(&models.Worker{})

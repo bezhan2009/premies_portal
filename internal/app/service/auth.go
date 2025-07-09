@@ -6,6 +6,7 @@ import (
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/repository"
+	"premiesPortal/pkg/db"
 	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
 	"premiesPortal/pkg/utils"
@@ -40,7 +41,7 @@ func SignIn(userDataCheck, password string) (user models.User, accessToken strin
 	return user, accessToken, refreshToken, nil
 }
 
-func SignUp(user models.User) (uint, error) {
+func SignUp(user models.User, worker models.Worker) (uint, error) {
 	if err := validators.SignUpValidator(user); err != nil {
 		return 0, err
 	}
@@ -52,10 +53,6 @@ func SignUp(user models.User) (uint, error) {
 
 	if user.Password == "" || user.Email == "" || user.Username == "" {
 		return 0, errs.ErrInvalidData
-	}
-
-	if utils.IsASCII(user.Username) {
-		return 0, errs.ErrUsernameCanContainOnlyASCII
 	}
 
 	if usernameExists {
@@ -75,11 +72,31 @@ func SignUp(user models.User) (uint, error) {
 
 	user.Password = utils.GenerateHash(user.Password)
 
+	tx := db.GetDBConn().Begin()
+
 	var userDB models.User
 
-	if userDB, err = repository.CreateUser(user); err != nil {
+	if userDB, err = repository.CreateUser(tx, user); err != nil {
+		tx.Rollback()
 		return 0, fmt.Errorf("failed to create user: %w", err)
 	}
+
+	if user.RoleID == 6 || user.RoleID == 8 {
+		office, err := repository.GetOfficeByTitle(worker.PlaceWork)
+		if err != nil {
+			tx.Rollback()
+			return 0, errs.ErrOfficeNotFound
+		}
+
+		worker.UserID = userDB.ID
+
+		if err = CreateWorker(tx, office.ID, worker); err != nil {
+			tx.Rollback()
+			return 0, err
+		}
+	}
+
+	tx.Commit()
 
 	return userDB.ID, nil
 }

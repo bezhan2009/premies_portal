@@ -8,9 +8,10 @@ import (
 
 func GetAllTests() (tests []models.Test, err error) {
 	if err = db.GetDBConn().
-		Preload("Question").
-		Preload("Question.Options").
+		Preload("Questions").
+		Preload("Questions.Options").
 		Preload("Answers").
+		Preload("Answers.User").
 		Find(&tests).Error; err != nil {
 		logger.Error.Printf("Error getting all tests: %v\n", err)
 		return nil, TranslateGormError(err)
@@ -22,9 +23,10 @@ func GetAllTests() (tests []models.Test, err error) {
 func GetTestById(id int) (test models.Test, err error) {
 	if err = db.GetDBConn().
 		Where("id = ?", id).
-		Preload("Question").
-		Preload("Question.Options").
+		Preload("Questions").
+		Preload("Questions.Options").
 		Preload("Answers").
+		Preload("Answers.User").
 		First(&test).Error; err != nil {
 		logger.Error.Printf("Error getting test %v: %v\n", id, err)
 		return models.Test{}, TranslateGormError(err)
@@ -33,7 +35,7 @@ func GetTestById(id int) (test models.Test, err error) {
 	return test, nil
 }
 
-func CreateTest(test []models.Test) (err error) {
+func CreateTest(test models.Test) (err error) {
 	if err = db.GetDBConn().Model(&test).Create(&test).Error; err != nil {
 		logger.Error.Printf("Error creating test %v: %v\n", test, err)
 

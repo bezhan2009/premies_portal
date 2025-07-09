@@ -5,7 +5,7 @@ import (
 	"premiesPortal/internal/repository"
 )
 
-func CreateTestOptions(options []models.Option) (err error) {
+func CreateTestOptions(options models.Option) (err error) {
 	err = repository.CreateTestOptions(options)
 	if err != nil {
 		return err

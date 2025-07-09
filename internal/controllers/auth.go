@@ -98,19 +98,30 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	userID, err := service.SignUp(models.User{
-		Username: user.Username,
-		Email:    user.Email,
-		Password: user.Password,
-		Phone:    user.Phone,
-		FullName: user.FullName,
-		RoleID:   int(user.RoleID),
-	})
+	userID, err := service.SignUp(
+		models.User{
+			Username: user.Username,
+			Email:    user.Email,
+			Password: user.Password,
+			Phone:    user.Phone,
+			FullName: user.FullName,
+			RoleID:   int(user.RoleID),
+		},
+
+		models.Worker{
+			Salary:        user.Salary,
+			Position:      user.Position,
+			Plan:          user.Plan,
+			SalaryProject: user.SalaryProject,
+			PlaceWork:     user.PlaceWork,
+		},
+	)
 	if err != nil {
 		if errors.Is(err, errs.ErrRecordNotFound) {
 			HandleError(c, errs.ErrIncorrectUsernameOrPassword)
 			return
 		}
+
 		HandleError(c, err)
 		return
 	}
@@ -174,6 +185,7 @@ func SignIn(c *gin.Context) {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		UserID:       signedUser.ID,
+		RoleID:       uint(signedUser.RoleID),
 	})
 }
 

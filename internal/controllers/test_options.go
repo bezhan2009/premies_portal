@@ -1,22 +1,32 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service"
 	"premiesPortal/pkg/errs"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func CreateTestOptions(c *gin.Context) {
-	var options []models.Option
-	if err := c.ShouldBindJSON(&options); err != nil {
+	questionIDStr := c.Param("id")
+	questionID, err := strconv.Atoi(questionIDStr)
+	if err != nil {
+		HandleError(c, errs.ErrInvalidID)
+		return
+	}
+
+	var option models.Option
+	if err = c.ShouldBindJSON(&option); err != nil {
 		HandleError(c, errs.ErrValidationFailed)
 		return
 	}
 
-	if err := service.CreateTestOptions(options); err != nil {
+	option.QuestionID = uint(questionID)
+
+	if err = service.CreateTestOptions(option); err != nil {
 		HandleError(c, err)
 		return
 	}

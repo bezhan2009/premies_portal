@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"gorm.io/gorm"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/pkg/db"
 	"premiesPortal/pkg/logger"
@@ -51,6 +52,16 @@ func GetOfficeWorkerByUserIDAndOfficeID(officeID, workerID uint) (officeUser mod
 
 func AddUserToOffice(officeUser *models.OfficeUser) (err error) {
 	if err = db.GetDBConn().Model(&models.OfficeUser{}).Create(officeUser).Error; err != nil {
+		logger.Error.Printf("[repository.AddUserToOffice] Error while adding user to office: %v\n", err)
+
+		return TranslateGormError(err)
+	}
+
+	return nil
+}
+
+func AddUserToOfficeByTX(tx *gorm.DB, officeUser *models.OfficeUser) (err error) {
+	if err = tx.Model(&models.OfficeUser{}).Create(officeUser).Error; err != nil {
 		logger.Error.Printf("[repository.AddUserToOffice] Error while adding user to office: %v\n", err)
 
 		return TranslateGormError(err)

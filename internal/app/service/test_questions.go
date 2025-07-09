@@ -5,7 +5,7 @@ import (
 	"premiesPortal/internal/repository"
 )
 
-func CreateTestQuestions(questions []models.Question) (err error) {
+func CreateTestQuestions(questions models.Question) (err error) {
 	err = repository.CreateTestQuestions(questions)
 	if err != nil {
 		return err

@@ -3,7 +3,6 @@ package validators
 import (
 	"premiesPortal/internal/app/models"
 	"premiesPortal/pkg/errs"
-	utils2 "premiesPortal/pkg/utils"
 )
 
 func SignUpValidator(user models.User) (err error) {
@@ -25,14 +24,6 @@ func SignUpValidator(user models.User) (err error) {
 
 	if user.RoleID == emptyInt {
 		return errs.ErrRoleIsRequired
-	}
-
-	if user.RoleID >= 4 {
-		return errs.ErrWrongRoleID
-	}
-
-	if !utils2.IsASCII(user.Username) {
-		return errs.ErrUsernameCanContainOnlyASCII
 	}
 
 	return nil

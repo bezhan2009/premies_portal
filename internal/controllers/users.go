@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service"
 	"premiesPortal/internal/controllers/middlewares"
 	"premiesPortal/pkg/errs"
@@ -41,13 +42,7 @@ func GetUserByID(c *gin.Context) {
 		return
 	}
 
-	roleID, err := service.GetRoleByUserID(uint(userID))
-	if err != nil {
-		HandleError(c, err)
-		return
-	}
-
-	user, err := service.GetUserByID(uint(userID), roleID)
+	user, err := service.GetUserByID(uint(userID))
 	if err != nil {
 		logger.Error.Printf("[controllers.GetUserByID] error: %v\n", err)
 		HandleError(c, err)
@@ -59,13 +54,37 @@ func GetUserByID(c *gin.Context) {
 
 func GetMyDataUser(c *gin.Context) {
 	userID := c.GetUint(middlewares.UserIDCtx)
-	roleID := c.GetUint(middlewares.UserRoleIDCtx)
 
-	user, err := service.GetUserByID(userID, roleID)
+	user, err := service.GetUserByID(userID)
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+func UpdateUsersPassword(c *gin.Context) {
+	userID := c.GetUint(middlewares.UserIDCtx)
+
+	var newPassword models.NewUsersPassword
+	if err := c.ShouldBindJSON(&newPassword); err != nil {
+		HandleError(c, errs.ErrValidationFailed)
+		return
+	}
+
+	if newPassword.NewPassword == "" {
+		HandleError(c, errs.ErrPasswordIsEmpty)
+		return
+	}
+
+	err := service.UpdateUserPassword(userID, newPassword.OldPassword, newPassword.NewPassword)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Password updated successfully",
+	})
 }

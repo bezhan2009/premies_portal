@@ -27,4 +27,6 @@ var (
 	ErrInvalidYear                 = errors.New("ErrInvalidYear")
 	ErrUserIsNotDirector           = errors.New("ErrUserIsNotDirector")
 	ErrAlreadyInOfficeWorkers      = errors.New("ErrAlreadyInOfficeWorkers")
+	ErrIncorrectAnswer             = errors.New("ErrIncorrectAnswer")
+	ErrAlreadyAnswered             = errors.New("ErrAlreadyAnswered")
 )

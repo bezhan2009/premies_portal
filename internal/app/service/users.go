@@ -4,6 +4,8 @@ import (
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/repository"
 	"premiesPortal/pkg/errs"
+	"premiesPortal/pkg/utils"
+	"strings"
 )
 
 func GetAllWorkers(afterID, month, year uint, options models.WorkerPreloadOptions) (users []models.Worker, err error) {
@@ -37,14 +39,36 @@ func GetWorkerByID(workerID, roleID, month, year uint, options models.WorkerPrel
 	return worker, nil
 }
 
-func GetUserByID(userID, roleID uint) (user models.User, err error) {
-	if roleID == 2 || roleID == 6 || roleID == 8 {
-		return user, errs.ErrYouAreWorker
-	}
+func GetUserByID(userID uint) (user models.User, err error) {
 	user, err = repository.GetUserByID(userID)
 	if err != nil {
 		return user, err
 	}
 
 	return user, nil
+}
+
+func UpdateUserPassword(userID uint, oldPassword, newPassword string) error {
+	newPassword = strings.TrimSpace(newPassword)
+	newPassword = utils.GenerateHash(newPassword)
+
+	oldPassword = strings.TrimSpace(oldPassword)
+	oldPassword = utils.GenerateHash(oldPassword)
+
+	user, err := GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+
+	if user.Password != oldPassword {
+		return errs.ErrPermissionDenied
+	}
+
+	user.Password = newPassword
+	err = repository.UpdateUser(user)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

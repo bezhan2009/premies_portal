@@ -48,7 +48,7 @@ func GetTestById(c *gin.Context) {
 }
 
 func CreateTest(c *gin.Context) {
-	var test []models.Test
+	var test models.Test
 	if err := c.ShouldBindJSON(&test); err != nil {
 		HandleError(c, errs.ErrValidationFailed)
 		return

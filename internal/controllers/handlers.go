@@ -14,6 +14,8 @@ func handleBadRequestErrors(err error) bool {
 		errors.Is(err, errs.ErrUsernameIsRequired) ||
 		errors.Is(err, errs.ErrPasswordIsRequired) ||
 		errors.Is(err, errs.ErrRoleIsRequired) ||
+		errors.Is(err, errs.ErrAlreadyAnswered) ||
+		errors.Is(err, errs.ErrIncorrectAnswer) ||
 		errors.Is(err, errs.ErrInvalidPhoneNumber) ||
 		errors.Is(err, errs.ErrEmailUniquenessFailed) ||
 		errors.Is(err, errs.ErrPhoneUniquenessFailed) ||

@@ -1,16 +1,34 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
+	"errors"
 	"net/http"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service"
+	"premiesPortal/internal/app/service/validators"
+	"premiesPortal/internal/controllers/middlewares"
+	"premiesPortal/internal/repository"
 	"premiesPortal/pkg/errs"
 	"strconv"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetTestAnswers(c *gin.Context) {
-	answers, err := service.GetTestAnswers()
+	isValid, month := validators.ValidateMonth(c)
+	if !isValid {
+		HandleError(c, errs.ErrInvalidMonth)
+		return
+	}
+
+	isValid, year := validators.ValidateYear(c)
+	if !isValid {
+		HandleError(c, errs.ErrInvalidYear)
+		return
+	}
+
+	answers, err := service.GetTestAnswers(uint(month), uint(year))
 	if err != nil {
 		HandleError(c, err)
 		return
@@ -54,16 +72,42 @@ func GetTestAnswersByAnswerId(c *gin.Context) {
 }
 
 func CreateTestAnswers(c *gin.Context) {
-	var answer []models.Answer
-	if err := c.ShouldBindJSON(&answer); err != nil {
+	userID := c.GetUint(middlewares.UserIDCtx)
+
+	var answers []models.Answer
+	if err := c.ShouldBindJSON(&answers); err != nil {
 		HandleError(c, errs.ErrValidationFailed)
 		return
 	}
 
-	if err := service.CreateTestAnswers(answer); err != nil {
+	for i, _ := range answers {
+		answers[i].UserID = userID
+	}
+
+	if err := service.CreateTestAnswers(userID, answers); err != nil {
 		HandleError(c, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, answer)
+	c.JSON(http.StatusOK, answers)
+}
+
+func AllowedAnswer(c *gin.Context) {
+	userID := c.GetUint(middlewares.UserIDCtx)
+
+	month, year := uint(time.Now().Month()), uint(time.Now().Year())
+
+	_, err := repository.GetTestAnswersByUserID(userID, month, year)
+	if err != nil {
+		if !errors.Is(err, errs.ErrRecordNotFound) {
+			HandleError(c, err)
+			return
+		}
+	}
+	if err == nil {
+		HandleError(c, errs.ErrAlreadyAnswered)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "ok"})
 }

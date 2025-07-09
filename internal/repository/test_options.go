@@ -6,7 +6,17 @@ import (
 	"premiesPortal/pkg/logger"
 )
 
-func CreateTestOptions(options []models.Option) (err error) {
+func GetOptionByID(optionID uint) (option models.Option, err error) {
+	if err = db.GetDBConn().Model(&models.Option{}).Where("id = ?", optionID).First(&option).Error; err != nil {
+		logger.Error.Printf("Error finding option with id %d. %v", optionID, err)
+
+		return option, err
+	}
+
+	return option, nil
+}
+
+func CreateTestOptions(options models.Option) (err error) {
 	if err = db.GetDBConn().Model(&models.Option{}).Create(&options).Error; err != nil {
 		logger.Error.Printf("Failed to create options: %v", err)
 

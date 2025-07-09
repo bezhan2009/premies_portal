@@ -5,6 +5,7 @@ type TokenResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 	UserID       uint   `json:"user_id"`
+	RoleID       uint   `json:"role_id"`
 }
 
 // RefreshTokenResponse represents the response with access token and user ID
@@ -29,6 +30,12 @@ type UserRequest struct {
 	FullName string `json:"full_name"`
 	Password string `json:"password"`
 	RoleID   uint   `json:"role_id"`
+
+	Salary        float32 `gorm:"not null"`
+	Position      string  `json:"position"`
+	Plan          uint    `json:"plan" gorm:"default:0"`
+	SalaryProject uint    `json:"salary_project" gorm:"default:0"`
+	PlaceWork     string  `json:"place_work"`
 }
 
 type UserLogin struct {

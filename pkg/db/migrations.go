@@ -37,6 +37,7 @@ func Migrate() error {
 		&models2.Question{},
 		&models2.Option{},
 		&models2.Answer{},
+		&models2.SelectedOption{},
 	)
 	if err != nil {
 		//logger.Error.Printf("[db.Migrate] Error migrating tables: %v", err)

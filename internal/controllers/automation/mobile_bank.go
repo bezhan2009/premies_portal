@@ -3,6 +3,7 @@ package automation
 import (
 	"context"
 	"premiesPortal/internal/app/grpc/gen/mobile_bank"
+	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/clients/automation_premies/grpc"
 	"premiesPortal/internal/controllers"
 	"premiesPortal/pkg/errs"
@@ -12,6 +13,18 @@ import (
 )
 
 func UploadMobileBankData(c *gin.Context) {
+	isValid, month := validators.ValidateMonth(c)
+	if !isValid {
+		controllers.HandleError(c, errs.ErrInvalidMonth)
+		return
+	}
+
+	isValid, year := validators.ValidateYear(c)
+	if !isValid {
+		controllers.HandleError(c, errs.ErrInvalidYear)
+		return
+	}
+
 	filePath := c.GetString(UploadedAutomationFilePath)
 
 	if filePath == "" {
@@ -21,7 +34,11 @@ func UploadMobileBankData(c *gin.Context) {
 
 	client := grpc.GetClient()
 
-	resp, err := client.UploadMobileBankData(context.Background(), &mobile_bank.MobileBankUploadRequest{FilePath: filePath})
+	resp, err := client.UploadMobileBankData(context.Background(), &mobile_bank.MobileBankUploadRequest{
+		Month:    int32(month),
+		Year:     int32(year),
+		FilePath: filePath,
+	})
 	if err != nil {
 		controllers.HandleError(c, err)
 		return

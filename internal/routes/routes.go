@@ -1,17 +1,18 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/providers/google"
-	swaggerFiles "github.com/swaggo/files"
-	"github.com/swaggo/gin-swagger"
 	"os"
 	_ "premiesPortal/docs"
 	"premiesPortal/internal/controllers"
 	"premiesPortal/internal/controllers/automation"
 	"premiesPortal/internal/controllers/middlewares"
 	"premiesPortal/internal/security"
+
+	"github.com/gin-gonic/gin"
+	"github.com/markbates/goth"
+	"github.com/markbates/goth/providers/google"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func InitRoutes(r *gin.Engine) *gin.Engine {
@@ -49,6 +50,8 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	// user & users Маршруты для сущности пользователей
 	r.GET("/user", middlewares.CheckUserAuthentication,
 		controllers.GetMyDataUser)
+	r.PATCH("/user", middlewares.CheckUserAuthentication,
+		controllers.UpdateUsersPassword)
 
 	usersRoute := r.Group("/users", middlewares.CheckUserAuthentication, middlewares.CheckUserNotWorker)
 	{
@@ -80,7 +83,6 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	auth := r.Group("/auth")
 	{
 		auth.POST("/sign-up", middlewares.CheckUserAuthentication, middlewares.CheckSignupPerms, controllers.SignUp)
-		auth.POST("/sign-up/temp", controllers.SignUp)
 		auth.POST("/sign-in", controllers.SignIn)
 		auth.POST("/refresh", controllers.RefreshToken)
 
@@ -89,7 +91,7 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	}
 
 	// office Маршруты для офисов
-	office := r.Group("/office", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
+	office := r.Group("/office", middlewares.CheckUserAuthentication, middlewares.CheckUserOperatorOrChairman)
 	{
 		office.GET("", controllers.GetAllOffices)
 		office.GET("/:id", controllers.GetOfficeByID)
@@ -186,14 +188,14 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 
 	testQuestions := tests.Group("/questions")
 	{
-		testQuestions.POST("", controllers.CreateTestQuestions)
+		testQuestions.POST("/:id", controllers.CreateTestQuestions)
 		testQuestions.PATCH("/:id", controllers.UpdateTestQuestions)
 		testQuestions.DELETE("/:id", controllers.DeleteTestQuestions)
 	}
 
-	testOptions := tests.Group("/options")
+	testOptions := testQuestions.Group("/options")
 	{
-		testOptions.POST("", controllers.CreateTestOptions)
+		testOptions.POST("/:id", controllers.CreateTestOptions)
 		testOptions.PATCH("/:id", controllers.UpdateTestOptions)
 		testOptions.DELETE("/:id", controllers.DeleteTestOptions)
 	}
@@ -201,6 +203,7 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	testAnswers := r.Group("tests/answers", middlewares.CheckUserAuthentication)
 	{
 		testAnswers.GET("", middlewares.CheckUserOperator, controllers.GetTestAnswers)
+		testAnswers.GET("/allow", controllers.AllowedAnswer)
 		testAnswers.GET("/:id/single", controllers.GetTestAnswersByAnswerId)
 		testAnswers.GET("/:id", controllers.GetTestAnswersByTestId)
 		testAnswers.POST("", controllers.CreateTestAnswers)
@@ -234,6 +237,7 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	reportsAutomation := automationRoutes.Group("reports")
 	{
 		reportsAutomation.GET("", automation.CreateZIPReports)
+		reportsAutomation.GET("/:id", automation.CreateExcelReport)
 	}
 
 	accountantAutomation := automationRoutes.Group("accountant")

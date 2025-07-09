@@ -9,7 +9,7 @@ import (
 func CheckUserNotWorker(c *gin.Context) {
 	userRole := c.GetUint(UserRoleIDCtx)
 	if userRole == 2 {
-		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"message": errs.ErrPermissionDenied})
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"message": errs.ErrPermissionDenied.Error()})
 		return
 	}
 

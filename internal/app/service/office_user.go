@@ -1,6 +1,7 @@
 package service
 
 import (
+	"gorm.io/gorm"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/repository"
@@ -36,6 +37,24 @@ func AddUserToOffice(officeUser *models.OfficeUser) (err error) {
 	}
 
 	err = repository.AddUserToOffice(officeUser)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func AddUserToOfficeByTX(tx *gorm.DB, officeUser *models.OfficeUser) (err error) {
+	if err = validators.ValidateOfficeUser(*officeUser); err != nil {
+		return err
+	}
+
+	_, err = repository.GetOfficeWorkerByUserIDAndOfficeID(uint(officeUser.OfficeID), uint(officeUser.WorkerID))
+	if err == nil {
+		return errs.ErrAlreadyInOfficeWorkers
+	}
+
+	err = repository.AddUserToOfficeByTX(tx, officeUser)
 	if err != nil {
 		return err
 	}

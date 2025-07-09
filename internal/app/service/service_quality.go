@@ -6,7 +6,7 @@ import (
 )
 
 func AddServiceQuality(quality models.ServiceQuality) (id uint, err error) {
-	id, err = repository.AddServiceQuality(quality)
+	id, err = repository.AddServiceQuality(&quality)
 	if err != nil {
 		return id, err
 	}

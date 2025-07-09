@@ -10,8 +10,7 @@ type Test struct {
 	Title       string `gorm:"not null"`
 	Description string `json:"description"`
 
-	QuestionID uint     `json:"question_id" gorm:"uniqueIndex"` // связь 1:1
-	Question   Question `gorm:"constraint:OnDelete:CASCADE;foreignKey:QuestionID"`
+	Questions []Question `gorm:"foreignKey:TestID"` // связь 1:M
 
 	Answers []Answer `gorm:"foreignKey:TestID"`
 }
@@ -27,8 +26,10 @@ const (
 type Question struct {
 	gorm.Model
 
-	Text string       `json:"text" gorm:"not null"`
-	Type QuestionType `json:"type" gorm:"type:varchar(20);not null"`
+	TestID uint         `json:"test_id" gorm:"not null;index"`
+	Test   Test         `json:"-" gorm:"foreignKey:TestID"`
+	Text   string       `json:"text" gorm:"not null"`
+	Type   QuestionType `json:"type" gorm:"type:varchar(20);not null"`
 
 	Options []Option `gorm:"foreignKey:QuestionID"`
 }
@@ -36,10 +37,11 @@ type Question struct {
 type Option struct {
 	gorm.Model
 
-	QuestionID uint     `json:"question_id" gorm:"not null;index"`
-	Question   Question `json:"-" gorm:"foreignKey:QuestionID"`
-	Text       string   `json:"text" gorm:"not null"`
-	IsCorrect  bool     `json:"-"`
+	QuestionID  uint     `json:"question_id" gorm:"not null;index"`
+	Question    Question `json:"-" gorm:"foreignKey:QuestionID"`
+	Text        string   `json:"text" gorm:"not null"`
+	CorrectText string   `json:"correct_text" gorm:"not null"`
+	IsCorrect   bool     `json:"is_correct"`
 }
 
 type AnswerType string
@@ -64,6 +66,8 @@ type Answer struct {
 	TextAnswer string `json:"text_answer"`
 
 	SelectedOptions []SelectedOption `gorm:"foreignKey:AnswerID"`
+
+	IsCorrectAnswer bool `json:"is_correct_answer"`
 }
 
 type SelectedOption struct {
