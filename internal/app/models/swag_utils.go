@@ -36,6 +36,9 @@ type UserRequest struct {
 	Plan          uint    `json:"plan" gorm:"default:0"`
 	SalaryProject uint    `json:"salary_project" gorm:"default:0"`
 	PlaceWork     string  `json:"place_work"`
+
+	OfficeTitle string `json:"office_title"`
+	OfficeDesc  string `json:"office_desc"`
 }
 
 type UserLogin struct {

@@ -41,7 +41,7 @@ func SignIn(userDataCheck, password string) (user models.User, accessToken strin
 	return user, accessToken, refreshToken, nil
 }
 
-func SignUp(user models.User, worker models.Worker) (uint, error) {
+func SignUp(user models.User, worker models.Worker, office models.Office) (uint, error) {
 	if err := validators.SignUpValidator(user); err != nil {
 		return 0, err
 	}
@@ -91,6 +91,18 @@ func SignUp(user models.User, worker models.Worker) (uint, error) {
 		worker.UserID = userDB.ID
 
 		if err = CreateWorker(tx, office.ID, worker); err != nil {
+			tx.Rollback()
+			return 0, err
+		}
+	}
+
+	if user.RoleID == 5 {
+		if office.Title == "" {
+			return 0, errs.ErrValidationFailed
+		}
+
+		office.DirectorID = int(userDB.ID)
+		if err = repository.CreateOfficeTX(tx, office); err != nil {
 			tx.Rollback()
 			return 0, err
 		}

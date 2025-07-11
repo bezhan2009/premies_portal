@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/pkg/db"
 	"premiesPortal/pkg/errs"
@@ -83,6 +84,16 @@ func GetOfficeByTitle(title string) (office models.Office, err error) {
 
 func CreateOffice(office models.Office) (err error) {
 	if err = db.GetDBConn().Model(&models.Office{}).Create(&office).Error; err != nil {
+		logger.Error.Printf("[repositoroty.CreateOffice] Error while creating office: %v", err)
+
+		return TranslateGormError(err)
+	}
+
+	return nil
+}
+
+func CreateOfficeTX(tx *gorm.DB, office models.Office) (err error) {
+	if err = tx.Model(&models.Office{}).Create(&office).Error; err != nil {
 		logger.Error.Printf("[repositoroty.CreateOffice] Error while creating office: %v", err)
 
 		return TranslateGormError(err)

@@ -30,7 +30,7 @@ func CreateOffice(office models.Office) (err error) {
 		return err
 	}
 
-	director, err := repository.GetUserByID(uint(*office.DirectorID))
+	director, err := repository.GetUserByID(uint(office.DirectorID))
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func CreateOffice(office models.Office) (err error) {
 }
 
 func UpdateOffice(office models.Office) (err error) {
-	director, err := repository.GetUserByID(uint(*office.DirectorID))
+	director, err := repository.GetUserByID(uint(office.DirectorID))
 	if err != nil {
 		return err
 	}

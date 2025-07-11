@@ -115,6 +115,11 @@ func SignUp(c *gin.Context) {
 			SalaryProject: user.SalaryProject,
 			PlaceWork:     user.PlaceWork,
 		},
+
+		models.Office{
+			Title:       user.OfficeTitle,
+			Description: user.OfficeDesc,
+		},
 	)
 	if err != nil {
 		if errors.Is(err, errs.ErrRecordNotFound) {
