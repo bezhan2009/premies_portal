@@ -4,18 +4,35 @@ import (
 	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
+	"premiesPortal/internal/app/grpc/gen/accountant"
 	upl "premiesPortal/internal/app/grpc/gen/upload_file"
+	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/clients/automation_premies/grpc"
+	"premiesPortal/internal/controllers"
 	"premiesPortal/pkg/errs"
 )
 
 func CreateXLSXAccountantReport(c *gin.Context) {
 	clientAutomation := grpc.GetClient()
 
+	isValid, month := validators.ValidateMonth(c)
+	if !isValid {
+		controllers.HandleError(c, errs.ErrInvalidYear)
+		return
+	}
+
+	isValid, year := validators.ValidateYear(c)
+	if !isValid {
+		controllers.HandleError(c, errs.ErrInvalidYear)
+		return
+	}
+
 	// Шаг 1. Создаём XLSX-файл
-	createResp, err := clientAutomation.CreateXLSXAccountantReport(context.Background(), &emptypb.Empty{})
+	createResp, err := clientAutomation.CreateXLSXAccountantReport(context.Background(), &accountant.CreateXLSXAccountantsRequest{
+		Month: int32(month),
+		Year:  int32(year),
+	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": errs.ErrSomethingWentWrong.Error(),

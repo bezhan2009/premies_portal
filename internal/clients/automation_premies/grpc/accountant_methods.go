@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
+	"premiesPortal/internal/app/grpc/gen/accountant"
 	"premiesPortal/internal/app/models"
 	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
 )
 
-func (c *Client) CreateXLSXAccountantReport(ctx context.Context, in *emptypb.Empty) (*models.ResponseWithStatusCode, error) {
+func (c *Client) CreateXLSXAccountantReport(ctx context.Context, in *accountant.CreateXLSXAccountantsRequest) (*models.ResponseWithStatusCode, error) {
 	const op = "grpc.CreateXLSXAccountantReport"
 
 	resp := models.ResponseWithStatusCode{
