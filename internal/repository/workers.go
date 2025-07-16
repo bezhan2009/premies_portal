@@ -75,7 +75,7 @@ func GetWorkerByID(month, year, workerID uint, opts models.WorkerPreloadOptions)
 		query = query.Preload("User")
 	}
 
-	err = query.Where("id = ? OR user_id = ?", workerID, workerID).First(&worker).Error
+	err = query.Where("id = ?", workerID).First(&worker).Error
 	if err != nil {
 		logger.Error.Printf("[repository.GetWorkerByID] error getting worker by id: %v\n", err)
 		return worker, TranslateGormError(err)
@@ -85,7 +85,7 @@ func GetWorkerByID(month, year, workerID uint, opts models.WorkerPreloadOptions)
 }
 
 func GetWorkerByUserID(workerID uint) (worker models.Worker, err error) {
-	err = db.GetDBConn().Model(&models.Worker{}).Where("id = ? OR user_id = ?", workerID, workerID).First(&worker).Error
+	err = db.GetDBConn().Model(&models.Worker{}).Where("user_id = ?", workerID).First(&worker).Error
 	if err != nil {
 		logger.Error.Printf("[repository.GetWorkerByID] error getting worker by id: %v\n", err)
 
