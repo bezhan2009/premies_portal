@@ -13,6 +13,28 @@ import (
 	"strconv"
 )
 
+func GetStatisticsCards(c *gin.Context) {
+	isValid, month := validators.ValidateMonth(c)
+	if !isValid {
+		HandleError(c, errs.ErrInvalidMonth)
+		return
+	}
+
+	isValid, year := validators.ValidateYear(c)
+	if !isValid {
+		HandleError(c, errs.ErrInvalidYear)
+		return
+	}
+
+	cardCharters, err := service.GetCardsStatistic(uint(month), uint(year))
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, cardCharters)
+}
+
 func GetCardDetailsWorkers(c *gin.Context) {
 	isValid, month := validators.ValidateMonth(c)
 	if !isValid {

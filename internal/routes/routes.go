@@ -76,6 +76,7 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	workersCardDetails := workerRoute.Group("card-details", middlewares.CheckUserAuthentication, middlewares.CheckUserNotWorker)
 	{
 		workersCardDetails.GET("", controllers.GetCardDetailsWorkers)
+		workersCardDetails.GET("/stats", controllers.GetStatisticsCards)
 		workersCardDetails.GET("/:id", controllers.GetCardDetailsWorkerByID)
 	}
 
