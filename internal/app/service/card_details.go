@@ -15,13 +15,12 @@ func GetCardsStatistic(month, year uint) (cardsCharters models.CardsCharters, er
 	cardsCharters.CardsInGeneral = uint(len(cards))
 
 	for _, card := range cards {
-		cardsCharters.OutBalance += card.OutBalance
-		cardsCharters.InBalance += card.InBalance
-		cardsCharters.DebtOsd += card.DebtOsd
-		cardsCharters.DebtOsk += card.DebtOsk
-
 		if card.IssueDate.Month() == time.Month(month) && card.IssueDate.Year() == int(year) {
 			cardsCharters.CardsForMonth += 1
+			cardsCharters.OutBalance += card.OutBalance
+			cardsCharters.InBalance += card.InBalance
+			cardsCharters.DebtOsd += card.DebtOsd
+			cardsCharters.DebtOsk += card.DebtOsk
 		}
 
 		if !card.IssueDate.IsZero() && card.DebtOsd > 0 {
