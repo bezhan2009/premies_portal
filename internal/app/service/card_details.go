@@ -12,15 +12,20 @@ func GetCardsStatistic(month, year uint) (cardsCharters models.CardsCharters, er
 		return models.CardsCharters{}, err
 	}
 
+	cardStats, err := repository.GetCardStats(month, year)
+	if err != nil {
+		return models.CardsCharters{}, err
+	}
+
 	cardsCharters.CardsInGeneral = uint(len(cards))
+	cardsCharters.DebtOsd = cardStats.DebtOsd
+	cardsCharters.DebtOsk = cardStats.DebtOsk
+	cardsCharters.OutBalance = cardStats.OutBalance
+	cardsCharters.InBalance = cardStats.InBalance
 
 	for _, card := range cards {
 		if card.IssueDate.Month() == time.Month(month) && card.IssueDate.Year() == int(year) {
 			cardsCharters.CardsForMonth += 1
-			cardsCharters.OutBalance += card.OutBalance
-			cardsCharters.InBalance += card.InBalance
-			cardsCharters.DebtOsd += card.DebtOsd
-			cardsCharters.DebtOsk += card.DebtOsk
 		}
 
 		if !card.IssueDate.IsZero() && card.DebtOsd > 0 {

@@ -37,12 +37,24 @@ func GetAllCardDetailsByDate(month, year uint) (cardDetails []models.CardDetails
 		Preload("Worker.User").
 		Limit(security.AppSettings.AppLogicParams.PaginationParams.Limit)
 	if err = query.Find(&cardDetails).Error; err != nil {
-		logger.Error.Printf("GetAllCardDetails query error: %s\n", err.Error())
+		logger.Error.Printf("GetAllCardDetailsByDate query error: %s\n", err.Error())
 
 		return nil, TranslateGormError(err)
 	}
 
 	return cardDetails, nil
+}
+
+func GetCardStats(month, year uint) (cardStats models.CardsCharters, err error) {
+	query := db.GetDBConn().Model(&models.CardsCharters{}).
+		Where("EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year)
+	if err = query.Find(&cardStats).Error; err != nil {
+		logger.Error.Printf("GetCardStats query error: %s\n", err.Error())
+
+		return models.CardsCharters{}, TranslateGormError(err)
+	}
+
+	return cardStats, err
 }
 
 func GetCardDetailsWorkers(afterID string, month, year int) (cardDetails []models.CardDetails, err error) {

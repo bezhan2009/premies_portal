@@ -27,6 +27,8 @@ type CardDetails struct {
 }
 
 type CardsCharters struct {
+	gorm.Model
+
 	DebtOsd        float64 `json:"debt_osd"`
 	DebtOsk        float64 `json:"debt_osk"`
 	OutBalance     float64 `json:"out_balance"`
@@ -34,4 +36,8 @@ type CardsCharters struct {
 	CardsInGeneral uint    `json:"cards_in_general"`
 	CardsForMonth  uint    `json:"cards_for_month"`
 	ActivatedCards uint    `json:"activated_cards"`
+}
+
+func (cc *CardsCharters) TableName() string {
+	return "cards_stats"
 }

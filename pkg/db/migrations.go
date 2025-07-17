@@ -22,6 +22,7 @@ func Migrate() error {
 		&models2.OfficeUser{},
 
 		&models2.CardSales{},
+		&models2.CardsCharters{},
 		&models2.CardDetails{},
 		&models2.MobileBankSales{},
 		&models2.MobileBankDetails{},
