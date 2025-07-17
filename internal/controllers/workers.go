@@ -8,6 +8,7 @@ import (
 	"premiesPortal/internal/app/service"
 	"premiesPortal/internal/app/service/validators"
 	"premiesPortal/internal/controllers/middlewares"
+	"premiesPortal/internal/repository"
 	"premiesPortal/pkg/db"
 	"premiesPortal/pkg/errs"
 	"premiesPortal/pkg/logger"
@@ -97,17 +98,7 @@ func GetWorkerByID(c *gin.Context) {
 
 	preloadOptions := parsePreloadQueryParams(c)
 
-	roleID, err := service.GetRoleByUserID(uint(workerID))
-	if err != nil {
-		HandleError(c, err)
-		return
-	}
-
-	worker, err = service.GetWorkerByID(uint(workerID), roleID, uint(month), uint(year), preloadOptions)
-	if err != nil {
-		HandleError(c, err)
-		return
-	}
+	worker, err = repository.GetWorkerByID(uint(month), uint(year), uint(workerID), preloadOptions)
 
 	_ = db.SetCache(cacheKey, worker)
 
