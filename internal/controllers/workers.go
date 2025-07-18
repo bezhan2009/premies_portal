@@ -120,12 +120,18 @@ func GetMyDataWorker(c *gin.Context) {
 
 	preloadOptions := parsePreloadQueryParams(c)
 
-	workerID := c.GetUint(middlewares.UserIDCtx)
+	userID := c.GetUint(middlewares.UserIDCtx)
 	roleID := c.GetUint(middlewares.UserRoleIDCtx)
 
-	cacheKey := GenerateRedisKeyFromQuery(c, fmt.Sprintf("worker_cache:%d", workerID))
-
 	var worker models.Worker
+
+	worker, err := repository.GetWorkerByUserID(userID)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	cacheKey := GenerateRedisKeyFromQuery(c, fmt.Sprintf("worker_cache:%d", worker.ID))
 
 	found, _ := db.GetCache(cacheKey, &worker)
 	if found {
@@ -133,7 +139,7 @@ func GetMyDataWorker(c *gin.Context) {
 		return
 	}
 
-	worker, err := service.GetWorkerByID(workerID, roleID, uint(month), uint(year), preloadOptions)
+	worker, err = service.GetWorkerByID(worker.ID, roleID, uint(month), uint(year), preloadOptions)
 	if err != nil {
 		HandleError(c, err)
 		return
