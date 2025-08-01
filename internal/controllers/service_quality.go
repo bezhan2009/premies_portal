@@ -23,7 +23,7 @@ func AddServiceQuality(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"card_turnover_id": serviceqID,
+		"servid": serviceqID,
 		"message":          "Added Service Quality successfully",
 	})
 }

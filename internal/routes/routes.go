@@ -151,6 +151,13 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 		knowledgeBases.DELETE("/:id", middlewares.CheckUserKnowledgePerms, controllers.DeleteKnowledgeBase)
 	}
 
+	mobileBank := r.Group("mobile-bank", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
+	{
+		mobileBank.POST("", controllers.AddMobileBankSale)
+		mobileBank.PATCH("/:id", controllers.UpdateMobileBankSale)
+		mobileBank.DELETE("/:id", controllers.DeleteMobileBankSale)
+	}
+
 	// cards Маршруты для карт
 	cards := r.Group("/cards", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
 

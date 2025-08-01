@@ -6,6 +6,19 @@ import (
 	"premiesPortal/pkg/logger"
 )
 
+
+func GetServiceQualitiesByID(servID uint) (serviceQualities []models.ServiceQuality, err error) {
+	if err = db.GetDBConn().Model(&models.ServiceQuality{}).
+		Where("id = ?", servID).
+		Find(&serviceQualities).Error; err != nil {
+		logger.Error.Printf("Error getting service qualitie: %v", err)
+
+		return nil, TranslateGormError(err)
+	}
+
+	return serviceQualities, nil
+}
+
 func GetServiceQualitiesByDateAndUserID(workerID, month, year uint) (serviceQualities []models.ServiceQuality, err error) {
 	if err = db.GetDBConn().Model(&models.ServiceQuality{}).
 		Where("EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
@@ -30,7 +43,7 @@ func AddServiceQuality(quality *models.ServiceQuality) (id uint, err error) {
 }
 
 func UpdateServiceQuality(quality models.ServiceQuality) (id uint, err error) {
-	if err = db.GetDBConn().Model(&models.ServiceQuality{}).Updates(&quality).Error; err != nil {
+	if err = db.GetDBConn().Model(&models.ServiceQuality{}).Where("id = ?", quality.ID).Updates(&quality).Error; err != nil {
 		logger.Error.Printf("[repository.UpdateServiceQuality] Error updating service quality %v", err)
 
 		return 0, TranslateGormError(err)
