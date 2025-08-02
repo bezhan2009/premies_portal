@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	accountantServ "premiesPortal/internal/app/grpc/gen/accountant"
+	applicationServ "premiesPortal/internal/app/grpc/gen/application"
 	cardPricesServ "premiesPortal/internal/app/grpc/gen/card_prices"
 	cardsServ "premiesPortal/internal/app/grpc/gen/cards"
 	mobileBankServ "premiesPortal/internal/app/grpc/gen/mobile_bank"
@@ -21,13 +22,14 @@ import (
 )
 
 type Client struct {
-	CardsApi      cardsServ.CardsServiceClient
-	MobileBankApi mobileBankServ.MobileBankServiceClient
-	TusApi        tusServ.TusServiceClient
-	CardPricesApi cardPricesServ.CardPricesServiceClient
-	ReportApi     reportServ.ReportsServiceClient
-	UploadFileApi uplServ.UploadFileServiceClient
-	AccountantApi accountantServ.AccountantsServiceClient
+	CardsApi       cardsServ.CardsServiceClient
+	MobileBankApi  mobileBankServ.MobileBankServiceClient
+	TusApi         tusServ.TusServiceClient
+	CardPricesApi  cardPricesServ.CardPricesServiceClient
+	ReportApi      reportServ.ReportsServiceClient
+	UploadFileApi  uplServ.UploadFileServiceClient
+	AccountantApi  accountantServ.AccountantsServiceClient
+	ApplicationApi applicationServ.ApplicationServiceClient
 }
 
 var client *Client
@@ -58,13 +60,14 @@ func New(ctx context.Context,
 	}
 
 	client = &Client{
-		CardsApi:      cardsServ.NewCardsServiceClient(conn),
-		MobileBankApi: mobileBankServ.NewMobileBankServiceClient(conn),
-		TusApi:        tusServ.NewTusServiceClient(conn),
-		CardPricesApi: cardPricesServ.NewCardPricesServiceClient(conn),
-		ReportApi:     reportServ.NewReportsServiceClient(conn),
-		UploadFileApi: uplServ.NewUploadFileServiceClient(conn),
-		AccountantApi: accountantServ.NewAccountantsServiceClient(conn),
+		CardsApi:       cardsServ.NewCardsServiceClient(conn),
+		MobileBankApi:  mobileBankServ.NewMobileBankServiceClient(conn),
+		TusApi:         tusServ.NewTusServiceClient(conn),
+		CardPricesApi:  cardPricesServ.NewCardPricesServiceClient(conn),
+		ReportApi:      reportServ.NewReportsServiceClient(conn),
+		UploadFileApi:  uplServ.NewUploadFileServiceClient(conn),
+		AccountantApi:  accountantServ.NewAccountantsServiceClient(conn),
+		ApplicationApi: applicationServ.NewApplicationServiceClient(conn),
 	}
 
 	return nil

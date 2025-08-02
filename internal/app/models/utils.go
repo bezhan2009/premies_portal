@@ -33,3 +33,7 @@ type NewUsersPassword struct {
 	OldPassword string `json:"old_password"`
 	NewPassword string `json:"new_password"`
 }
+
+type ApplicationReportsRequest struct {
+	ApplicationIDS []int32 `json:"application_ids"`
+}

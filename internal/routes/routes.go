@@ -253,5 +253,10 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 		accountantAutomation.GET("", automation.CreateXLSXAccountantReport)
 	}
 
+	applicationAutomation := automationRoutes.Group("application")
+	{
+		applicationAutomation.POST("", automation.CreateXLSXApplicationReport)
+	}
+
 	return r
 }
