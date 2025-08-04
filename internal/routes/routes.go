@@ -217,7 +217,7 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 		testAnswers.POST("", controllers.CreateTestAnswers)
 	}
 
-	automationRoutes := r.Group("automation", middlewares.CheckUserAuthentication, middlewares.CheckUserOperator)
+	automationRoutes := r.Group("automation", middlewares.CheckUserAuthentication, middlewares.CheckUsersApplicationPerms)
 
 	cardsAutomation := automationRoutes.Group("cards")
 	{
