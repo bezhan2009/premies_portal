@@ -8,7 +8,7 @@ import (
 func CheckUserOperatorOrChairman(c *gin.Context) {
 	roleID := c.GetUint(UserRoleIDCtx)
 
-	if roleID != 3 && roleID != 9 {
+	if roleID != 3 && roleID != 9 && roleID != 5 {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
 			"message": "Permission denied",
 		})
