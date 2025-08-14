@@ -62,8 +62,10 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	// worker & workers маршруты для сущности
 	r.GET("/worker", middlewares.CheckUserAuthentication,
 		controllers.GetMyDataWorker)
+
 	r.GET("/worker/card-details", middlewares.CheckUserAuthentication,
 		controllers.GetMyCardDetailsWorker)
+
 	r.GET("/worker/mb-details", middlewares.CheckUserAuthentication,
 		controllers.GetAllWorkersMobileBankDetails)
 
@@ -71,6 +73,10 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	{
 		workerRoute.GET("", controllers.GetAllWorkers)
 		workerRoute.GET("/:id", controllers.GetWorkerByID)
+
+		workerRoute.PATCH("/:id", controllers.UpdateWorker)
+		workerRoute.PATCH("user/:id", controllers.UpdateUser)
+		workerRoute.DELETE("/:id", controllers.DeleteWorker)
 	}
 
 	workersCardDetails := workerRoute.Group("card-details", middlewares.CheckUserAuthentication, middlewares.CheckUserNotWorker)

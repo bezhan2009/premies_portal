@@ -149,3 +149,45 @@ func GetMyDataWorker(c *gin.Context) {
 
 	c.JSON(http.StatusOK, worker)
 }
+
+func UpdateWorker(c *gin.Context) {
+	workerID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error.Printf("[controllers.GetWorkerByID] invalid user_id path parameter: %s\n", c.Param("id"))
+		HandleError(c, errs.ErrInvalidID)
+		return
+	}
+
+	var worker models.Worker
+	if err = c.ShouldBindJSON(&worker); err != nil {
+		HandleError(c, errs.ErrValidationFailed)
+		return
+	}
+
+	worker.ID = uint(workerID)
+
+	err = service.UpdateWorkerByID(worker)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "worker updated successfully"})
+}
+
+func DeleteWorker(c *gin.Context) {
+	workerID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error.Printf("[controllers.GetWorkerByID] invalid user_id path parameter: %s\n", c.Param("id"))
+		HandleError(c, errs.ErrInvalidID)
+		return
+	}
+
+	err = service.DeleteWorkerByID(uint(workerID))
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "worker has been deleted successfully"})
+}

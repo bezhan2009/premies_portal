@@ -72,3 +72,27 @@ func UpdateUserPassword(userID uint, oldPassword, newPassword string) error {
 
 	return nil
 }
+
+func UpdateUser(user models.User) (err error) {
+	userDB, err := GetUserByID(user.ID)
+	if err != nil {
+		return err
+	}
+
+	user.Password = userDB.Password
+
+	if user.Username == userDB.Username {
+		user.Username = ""
+	}
+
+	if user.Email == userDB.Email {
+		user.Email = ""
+	}
+
+	err = repository.UpdateUser(user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

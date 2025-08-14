@@ -64,6 +64,32 @@ func GetMyDataUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+func UpdateUser(c *gin.Context) {
+	userID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		logger.Error.Printf("[controllers.GetUserByID] invalid user_id path parameter: %s\n", c.Param("id"))
+		HandleError(c, errs.ErrInvalidID)
+		return
+	}
+
+	var user models.User
+	err = c.ShouldBindJSON(&user)
+	if err != nil {
+		HandleError(c, errs.ErrValidationFailed)
+		return
+	}
+
+	user.ID = uint(userID)
+
+	err = service.UpdateUser(user)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+}
+
 func UpdateUsersPassword(c *gin.Context) {
 	userID := c.GetUint(middlewares.UserIDCtx)
 

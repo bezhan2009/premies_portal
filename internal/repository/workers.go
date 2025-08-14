@@ -94,3 +94,25 @@ func GetWorkerByUserID(workerID uint) (worker models.Worker, err error) {
 
 	return worker, nil
 }
+
+func UpdateWorkerByID(worker models.Worker) (err error) {
+	err = db.GetDBConn().Model(&models.Worker{}).Where("id = ?", worker.ID).Updates(&worker).Error
+	if err != nil {
+		logger.Error.Printf("[repository.UpdateWorkerByID] error updating worker by id: %v\n", err)
+
+		return TranslateGormError(err)
+	}
+
+	return nil
+}
+
+func DeleteWorkerByID(workerID uint) (err error) {
+	err = db.GetDBConn().Model(&models.Worker{}).Where("id = ?", workerID).Delete(&models.Worker{}).Error
+	if err != nil {
+		logger.Error.Printf("[repository.DeleteWorkerByID] error deleting worker by id: %v\n", err)
+
+		return TranslateGormError(err)
+	}
+
+	return nil
+}

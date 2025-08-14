@@ -30,3 +30,21 @@ func CreateWorker(tx *gorm.DB, officeID uint, worker models.Worker) (err error) 
 
 	return nil
 }
+
+func UpdateWorkerByID(worker models.Worker) (err error) {
+	err = repository.UpdateWorkerByID(worker)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteWorkerByID(workerID uint) (err error) {
+	err = repository.DeleteWorkerByID(workerID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

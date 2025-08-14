@@ -155,7 +155,7 @@ func GetUserByEmail(email string) (user models.User, err error) {
 }
 
 func UpdateUser(user models.User) (err error) {
-	if err = db.GetDBConn().Model(models.User{}).Where("id = ?", user.ID).Updates(user).Error; err != nil {
+	if err = db.GetDBConn().Model(models.User{}).Where("id = ?", user.ID).Updates(&user).Error; err != nil {
 		logger.Error.Printf("[repository.UpdateUser] Error while updating user: %v", err)
 
 		return TranslateGormError(err)
