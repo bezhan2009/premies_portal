@@ -26,6 +26,21 @@ func GetAllOffices(month, year uint) (offices []models.Office, err error) {
 	return offices, nil
 }
 
+func GetOfficeByDirectorID(directorID, month, year uint) (office models.Office, err error) {
+	if err = db.GetDBConn().Model(&models.Office{}).Where("director_id = ?", directorID).
+		Preload("OfficeUsers").
+		Preload("OfficeUsers.Worker").
+		Preload("OfficeUsers.Worker.CardSales", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
+		Preload("OfficeUsers.Worker.CardTurnovers", "EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", month, year).
+		Preload("OfficeUsers.Worker.User").First(&office).Error; err != nil {
+		logger.Error.Printf("Error while getting office by worker id: %v", err)
+
+		return models.Office{}, TranslateGormError(err)
+	}
+
+	return office, nil
+}
+
 func GetOfficesAndUsersById(officeID int) (officeAndUsers models.OfficeAndUsers, err error) {
 	var office models.Office
 	var officeUsers []models.OfficeUser

@@ -5,6 +5,7 @@ import (
 	"premiesPortal/internal/app/models"
 	"premiesPortal/internal/app/service"
 	"premiesPortal/internal/app/service/validators"
+	"premiesPortal/internal/controllers/middlewares"
 	"premiesPortal/pkg/errs"
 	"strconv"
 
@@ -54,6 +55,30 @@ func GetOfficeByID(c *gin.Context) {
 	}
 
 	office, err := service.GetOfficeById(uint(month), uint(year), officeID)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, office)
+}
+
+func GetOfficeByDirectorID(c *gin.Context) {
+	directorID := c.GetUint(middlewares.UserIDCtx)
+
+	isValid, month := validators.ValidateMonth(c)
+	if !isValid {
+		HandleError(c, errs.ErrInvalidMonth)
+		return
+	}
+
+	isValid, year := validators.ValidateYear(c)
+	if !isValid {
+		HandleError(c, errs.ErrInvalidYear)
+		return
+	}
+
+	office, err := service.GetOfficeByDirectorID(directorID, uint(month), uint(year))
 	if err != nil {
 		HandleError(c, err)
 		return

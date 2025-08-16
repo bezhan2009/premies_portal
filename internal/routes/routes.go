@@ -102,6 +102,7 @@ func InitRoutes(r *gin.Engine) *gin.Engine {
 	{
 		office.GET("", controllers.GetAllOffices)
 		office.GET("/:id", controllers.GetOfficeByID)
+		office.GET("director", controllers.GetOfficeByDirectorID)
 
 		office.POST("", controllers.CreateOffice)
 		office.PATCH("/:id", controllers.UpdateOffice)

@@ -25,6 +25,15 @@ func GetOfficeById(month, year uint, officeID int) (office models.Office, err er
 	return office, nil
 }
 
+func GetOfficeByDirectorID(directorID, month, year uint) (office models.Office, err error) {
+	office, err = repository.GetOfficeByDirectorID(directorID, month, year)
+	if err != nil {
+		return office, err
+	}
+
+	return office, nil
+}
+
 func CreateOffice(office models.Office) (err error) {
 	if err = validators.ValidateOffice(office); err != nil {
 		return err

@@ -99,6 +99,10 @@ func GetWorkerByID(c *gin.Context) {
 	preloadOptions := parsePreloadQueryParams(c)
 
 	worker, err = repository.GetWorkerByID(uint(month), uint(year), uint(workerID), preloadOptions)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
 
 	_ = db.SetCache(cacheKey, worker)
 
