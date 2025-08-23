@@ -25,13 +25,16 @@ RUN go build -o main main.go
 # ---------- RUNTIME STAGE ----------
 FROM ubuntu:latest
 
-WORKDIR /root/
+WORKDIR /app
 
 # Устанавливаем зависимости
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Создаём директорию для конфигов
-RUN mkdir configs
+RUN mkdir -p configs
+
+# Создаём директорию для uploads
+RUN mkdir -p uploads
 
 # Копируем бинарник
 COPY --from=builder /app/main .
@@ -42,7 +45,8 @@ COPY --from=builder /app/configs/docker/configs.json ./configs/
 # Копируем .env
 COPY --from=builder /app/.env .
 
- COPY --from=builder /app/docs ./docs/
+# Копируем docs
+COPY --from=builder /app/docs ./docs/
 
 EXPOSE 7575
 
